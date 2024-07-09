@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "ch.admin.eid"
+    namespace = "ch.admin.eid.bbscryptosuite"
     compileSdk = 34
 
     defaultConfig {
@@ -50,8 +50,8 @@ dependencies {
 configure<PublishingExtension> {
     publications {
         register<MavenPublication>("gpr") {
-            groupId = "ch.admin.eid"
-            artifactId = "didresolver-android"
+            groupId = "ch.admin.eid.bbscryptosuite"
+            artifactId = "bbscryptosuite-android"
             version = "0.0.1"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
@@ -61,7 +61,7 @@ configure<PublishingExtension> {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/admin-ch-ssi/didresolver-kotlin-android")
+            url = uri("https://maven.pkg.github.com/admin-ch-ssi/SSI_bbs-cryptosuite-kotlin-android")
             credentials {
                 username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
