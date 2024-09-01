@@ -52,7 +52,7 @@ configure<PublishingExtension> {
         register<MavenPublication>("gpr") {
             groupId = "ch.admin.eid.bbscryptosuite"
             artifactId = "bbscryptosuite-android"
-            version = "0.0.2"
+            version = "0.0.1"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }
@@ -60,8 +60,9 @@ configure<PublishingExtension> {
     }
     repositories {
         maven {
+            // To publish run in powershell -> $env:TOKEN='<github token>'; $env:USERNAME='<you user>'; ./gradlew publish
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/admin-ch-ssi/SSI_bbs-cryptosuite-kotlin-android")
+            url = uri("https://maven.pkg.github.com/e-id-admin/bbscryptosuite-kotlin-android")
             credentials {
                 username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")

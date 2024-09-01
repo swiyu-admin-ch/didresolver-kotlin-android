@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SSI_bbs-cryptosuite-kotlin-android"
+rootProject.name = "bbscryptosuite-kotlin-android"
 include(":bbscryptosuite-android")
