@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "bbscryptosuite-kotlin-android"
-include(":bbscryptosuite-android")
+rootProject.name = "didresolver-kotlin-android"
+include(":didresolver-android")
