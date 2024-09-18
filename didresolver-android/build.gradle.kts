@@ -52,7 +52,7 @@ configure<PublishingExtension> {
         register<MavenPublication>("gpr") {
             groupId = "ch.admin.eid.didresolver"
             artifactId = "didresolver-android"
-            version = "0.0.1"
+            version = "0.0.3"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }

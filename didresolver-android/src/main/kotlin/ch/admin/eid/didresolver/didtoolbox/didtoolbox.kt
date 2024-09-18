@@ -421,6 +421,8 @@ internal interface UniffiLib : Library {
     ): Pointer
     fun uniffi_didtoolbox_fn_method_diddocumentstate_validate(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
+    fun uniffi_didtoolbox_fn_method_diddocumentstate_validate_with_scid(`ptr`: Pointer,`scid`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Pointer
     fun uniffi_didtoolbox_fn_clone_ed25519keypair(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didtoolbox_fn_free_ed25519keypair(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
@@ -465,11 +467,11 @@ internal interface UniffiLib : Library {
     ): Unit
     fun uniffi_didtoolbox_fn_constructor_trustdidweb_create(`url`: RustBuffer.ByValue,`keyPair`: Pointer,`allowHttp`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
-    fun uniffi_didtoolbox_fn_constructor_trustdidweb_deactivate(`didTdw`: RustBuffer.ByValue,`didLog`: RustBuffer.ByValue,`keyPair`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_didtoolbox_fn_constructor_trustdidweb_deactivate(`didTdw`: RustBuffer.ByValue,`didLog`: RustBuffer.ByValue,`keyPair`: Pointer,`allowHttp`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didtoolbox_fn_constructor_trustdidweb_read(`didTdw`: RustBuffer.ByValue,`allowHttp`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
-    fun uniffi_didtoolbox_fn_constructor_trustdidweb_update(`didTdw`: RustBuffer.ByValue,`didLog`: RustBuffer.ByValue,`didDoc`: RustBuffer.ByValue,`keyPair`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_didtoolbox_fn_constructor_trustdidweb_update(`didTdw`: RustBuffer.ByValue,`didLog`: RustBuffer.ByValue,`didDoc`: RustBuffer.ByValue,`keyPair`: Pointer,`allowHttp`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didtoolbox_fn_method_trustdidweb_get_did(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -625,6 +627,8 @@ internal interface UniffiLib : Library {
     ): Short
     fun uniffi_didtoolbox_checksum_method_diddocumentstate_validate(
     ): Short
+    fun uniffi_didtoolbox_checksum_method_diddocumentstate_validate_with_scid(
+    ): Short
     fun uniffi_didtoolbox_checksum_method_ed25519keypair_get_signing_key(
     ): Short
     fun uniffi_didtoolbox_checksum_method_ed25519keypair_get_verifying_key(
@@ -724,6 +728,9 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
     if (lib.uniffi_didtoolbox_checksum_method_diddocumentstate_validate() != 4769.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_didtoolbox_checksum_method_diddocumentstate_validate_with_scid() != 46799.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_didtoolbox_checksum_method_ed25519keypair_get_signing_key() != 65401.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -787,13 +794,13 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
     if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_create() != 52733.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_deactivate() != 32104.toShort()) {
+    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_deactivate() != 22064.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_read() != 26526.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_update() != 28210.toShort()) {
+    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_update() != 36262.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_didtoolbox_checksum_constructor_trustdidwebprocessor_new() != 14974.toShort()) {
@@ -1345,6 +1352,8 @@ public interface DidDocumentStateInterface {
     
     fun `validate`(): DidDoc
     
+    fun `validateWithScid`(`scid`: String?): DidDoc
+    
     companion object
 }
 
@@ -1387,6 +1396,17 @@ open class DidDocumentState : FFIObject, DidDocumentStateInterface {
     uniffiRustCall() { _status ->
     UniffiLib.INSTANCE.uniffi_didtoolbox_fn_method_diddocumentstate_validate(it,
         
+        _status)
+}
+        }.let {
+            FfiConverterTypeDidDoc.lift(it)
+        }
+    
+    override fun `validateWithScid`(`scid`: String?): DidDoc =
+        callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_didtoolbox_fn_method_diddocumentstate_validate_with_scid(it,
+        FfiConverterOptionalString.lower(`scid`),
         _status)
 }
         }.let {
@@ -1936,10 +1956,10 @@ open class TrustDidWeb : FFIObject, TrustDidWebInterface {
     UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_create(FfiConverterString.lower(`url`),FfiConverterTypeEd25519KeyPair.lower(`keyPair`),FfiConverterOptionalBoolean.lower(`allowHttp`),_status)
 })
         
-        fun `deactivate`(`didTdw`: String, `didLog`: String, `keyPair`: Ed25519KeyPair): TrustDidWeb =
+        fun `deactivate`(`didTdw`: String, `didLog`: String, `keyPair`: Ed25519KeyPair, `allowHttp`: Boolean?): TrustDidWeb =
             TrustDidWeb(
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_deactivate(FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),FfiConverterTypeEd25519KeyPair.lower(`keyPair`),_status)
+    UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_deactivate(FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),FfiConverterTypeEd25519KeyPair.lower(`keyPair`),FfiConverterOptionalBoolean.lower(`allowHttp`),_status)
 })
         
         fun `read`(`didTdw`: String, `allowHttp`: Boolean?): TrustDidWeb =
@@ -1948,10 +1968,10 @@ open class TrustDidWeb : FFIObject, TrustDidWebInterface {
     UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_read(FfiConverterString.lower(`didTdw`),FfiConverterOptionalBoolean.lower(`allowHttp`),_status)
 })
         
-        fun `update`(`didTdw`: String, `didLog`: String, `didDoc`: String, `keyPair`: Ed25519KeyPair): TrustDidWeb =
+        fun `update`(`didTdw`: String, `didLog`: String, `didDoc`: String, `keyPair`: Ed25519KeyPair, `allowHttp`: Boolean?): TrustDidWeb =
             TrustDidWeb(
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_update(FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),FfiConverterString.lower(`didDoc`),FfiConverterTypeEd25519KeyPair.lower(`keyPair`),_status)
+    UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_update(FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),FfiConverterString.lower(`didDoc`),FfiConverterTypeEd25519KeyPair.lower(`keyPair`),FfiConverterOptionalBoolean.lower(`allowHttp`),_status)
 })
         
     }
@@ -2125,9 +2145,12 @@ public object FfiConverterTypeTrustDidWebProcessor: FfiConverter<TrustDidWebProc
 
 
 data class Jwk (
-    var `kty`: String, 
-    var `crv`: String, 
-    var `x`: String
+    var `alg`: String?, 
+    var `kid`: String?, 
+    var `kty`: String?, 
+    var `crv`: String?, 
+    var `x`: String?, 
+    var `y`: String?
 ) {
     
     companion object
@@ -2136,22 +2159,31 @@ data class Jwk (
 public object FfiConverterTypeJwk: FfiConverterRustBuffer<Jwk> {
     override fun read(buf: ByteBuffer): Jwk {
         return Jwk(
-            FfiConverterString.read(buf),
-            FfiConverterString.read(buf),
-            FfiConverterString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
         )
     }
 
     override fun allocationSize(value: Jwk) = (
-            FfiConverterString.allocationSize(value.`kty`) +
-            FfiConverterString.allocationSize(value.`crv`) +
-            FfiConverterString.allocationSize(value.`x`)
+            FfiConverterOptionalString.allocationSize(value.`alg`) +
+            FfiConverterOptionalString.allocationSize(value.`kid`) +
+            FfiConverterOptionalString.allocationSize(value.`kty`) +
+            FfiConverterOptionalString.allocationSize(value.`crv`) +
+            FfiConverterOptionalString.allocationSize(value.`x`) +
+            FfiConverterOptionalString.allocationSize(value.`y`)
     )
 
     override fun write(value: Jwk, buf: ByteBuffer) {
-            FfiConverterString.write(value.`kty`, buf)
-            FfiConverterString.write(value.`crv`, buf)
-            FfiConverterString.write(value.`x`, buf)
+            FfiConverterOptionalString.write(value.`alg`, buf)
+            FfiConverterOptionalString.write(value.`kid`, buf)
+            FfiConverterOptionalString.write(value.`kty`, buf)
+            FfiConverterOptionalString.write(value.`crv`, buf)
+            FfiConverterOptionalString.write(value.`x`, buf)
+            FfiConverterOptionalString.write(value.`y`, buf)
     }
 }
 
