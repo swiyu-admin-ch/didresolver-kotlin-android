@@ -1,10 +1,10 @@
-![Public Beta banner](https://github.com/e-id-admin/eidch-public-beta/blob/main/assets/github-banner-publicbeta.jpg)
+![GitHub swiyu banner](https://github.com/swiyu-admin-ch/swiyu-admin-ch.github.io/blob/main/assets/images/github-banner.jpg)
 
 # DID resolver for Kotlin/Android applications
 
-This project contains language bindings required for loading and using the [DID resolver](https://github.com/e-id-admin/didresolver) library in Kotlin applications intended for Android platform.
+This project contains language bindings required for loading and using the [DID resolver](https://github.com/swiyu-admin-ch/didresolver) library in Kotlin applications intended for Android platform.
 
-You are more then welcome to explore the relevant [examples](https://github.com/e-id-admin/didresolver-examples) in a further detail.
+You are more then welcome to explore the relevant [examples](https://github.com/swiyu-admin-ch/didresolver-examples) in a further detail.
 
 ## Contributions and feedback
 
