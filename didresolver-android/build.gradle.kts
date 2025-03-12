@@ -52,7 +52,7 @@ configure<PublishingExtension> {
         register<MavenPublication>("gpr") {
             groupId = "ch.admin.eid.didresolver"
             artifactId = "didresolver-android"
-            version = "1.0.1"
+            version = "2.0.0"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }
@@ -62,7 +62,7 @@ configure<PublishingExtension> {
         maven {
             // To publish run in powershell -> $env:TOKEN='<github token>'; $env:USERNAME='<you user>'; ./gradlew publish
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/e-id-admin/didresolver-kotlin-android")
+            url = uri("https://maven.pkg.github.com/swiyu-admin-ch/didresolver-kotlin-android")
             credentials {
                 // For the GitHub packages, create a personal access token having 'write:packages' scope
                 // and then store it into gradle.properties:

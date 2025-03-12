@@ -748,7 +748,7 @@ internal interface UniffiLib : Library {
     ): Pointer
     fun uniffi_didresolver_fn_free_did(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): Unit
-    fun uniffi_didresolver_fn_constructor_did_new(`text`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_didresolver_fn_constructor_did_new(`didTdw`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didresolver_fn_method_did_get_url(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -895,7 +895,7 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
     if (lib.uniffi_didresolver_checksum_method_did_resolve() != 45277.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_constructor_did_new() != 23201.toShort()) {
+    if (lib.uniffi_didresolver_checksum_constructor_did_new() != 41094.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1193,11 +1193,11 @@ open class Did: Disposable, AutoCloseable, DidInterface {
         this.pointer = null
         this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
     }
-    constructor(`text`: kotlin.String) :
+    constructor(`didTdw`: kotlin.String) :
         this(
-    uniffiRustCall() { _status ->
+    uniffiRustCallWithError(DidResolveException) { _status ->
     UniffiLib.INSTANCE.uniffi_didresolver_fn_constructor_did_new(
-        FfiConverterString.lower(`text`),_status)
+        FfiConverterString.lower(`didTdw`),_status)
 }
     )
 

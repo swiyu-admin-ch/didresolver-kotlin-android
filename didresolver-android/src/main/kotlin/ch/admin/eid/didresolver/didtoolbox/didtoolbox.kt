@@ -792,6 +792,8 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
 
 
 
+
+
 // A JNA Library to expose the extern-C FFI definitions.
 // This is an implementation detail which will be called internally by the public API.
 
@@ -887,19 +889,21 @@ internal interface UniffiLib : Library {
     ): Pointer
     fun uniffi_didtoolbox_fn_free_trustdidweb(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): Unit
-    fun uniffi_didtoolbox_fn_constructor_trustdidweb_read(`didTdw`: RustBuffer.ByValue,`didLog`: RustBuffer.ByValue,`allowHttp`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_didtoolbox_fn_constructor_trustdidweb_read(`didTdw`: RustBuffer.ByValue,`didLog`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didtoolbox_fn_method_trustdidweb_get_did(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     fun uniffi_didtoolbox_fn_method_trustdidweb_get_did_doc(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
+    fun uniffi_didtoolbox_fn_method_trustdidweb_get_did_doc_obj(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+    ): Pointer
     fun uniffi_didtoolbox_fn_method_trustdidweb_get_did_log(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     fun uniffi_didtoolbox_fn_clone_trustdidwebid(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didtoolbox_fn_free_trustdidwebid(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): Unit
-    fun uniffi_didtoolbox_fn_constructor_trustdidwebid_parse_did_tdw(`didTdw`: RustBuffer.ByValue,`allowHttp`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_didtoolbox_fn_constructor_trustdidwebid_parse_did_tdw(`didTdw`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): Pointer
     fun uniffi_didtoolbox_fn_method_trustdidwebid_get_scid(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -1055,6 +1059,8 @@ internal interface UniffiLib : Library {
     ): Short
     fun uniffi_didtoolbox_checksum_method_trustdidweb_get_did_doc(
     ): Short
+    fun uniffi_didtoolbox_checksum_method_trustdidweb_get_did_doc_obj(
+    ): Short
     fun uniffi_didtoolbox_checksum_method_trustdidweb_get_did_log(
     ): Short
     fun uniffi_didtoolbox_checksum_method_trustdidwebid_get_scid(
@@ -1153,6 +1159,9 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
     if (lib.uniffi_didtoolbox_checksum_method_trustdidweb_get_did_doc() != 27888.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_didtoolbox_checksum_method_trustdidweb_get_did_doc_obj() != 44965.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_didtoolbox_checksum_method_trustdidweb_get_did_log() != 54432.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -1183,10 +1192,10 @@ private fun uniffiCheckApiChecksums(lib: UniffiLib) {
     if (lib.uniffi_didtoolbox_checksum_constructor_ed25519verifyingkey_from_multibase() != 9783.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_read() != 43492.toShort()) {
+    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidweb_read() != 32708.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidwebid_parse_did_tdw() != 39803.toShort()) {
+    if (lib.uniffi_didtoolbox_checksum_constructor_trustdidwebid_parse_did_tdw() != 44898.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -3132,6 +3141,8 @@ public interface TrustDidWebInterface {
     
     fun `getDidDoc`(): kotlin.String
     
+    fun `getDidDocObj`(): DidDoc
+    
     fun `getDidLog`(): kotlin.String
     
     companion object
@@ -3242,6 +3253,19 @@ open class TrustDidWeb: Disposable, AutoCloseable, TrustDidWebInterface {
     }
     
 
+    
+    @Throws(TrustDidWebException::class)override fun `getDidDocObj`(): DidDoc {
+            return FfiConverterTypeDidDoc.lift(
+    callWithPointer {
+    uniffiRustCallWithError(TrustDidWebException) { _status ->
+    UniffiLib.INSTANCE.uniffi_didtoolbox_fn_method_trustdidweb_get_did_doc_obj(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
     override fun `getDidLog`(): kotlin.String {
             return FfiConverterString.lift(
     callWithPointer {
@@ -3259,11 +3283,11 @@ open class TrustDidWeb: Disposable, AutoCloseable, TrustDidWebInterface {
     
     companion object {
         
-    @Throws(TrustDidWebException::class) fun `read`(`didTdw`: kotlin.String, `didLog`: kotlin.String, `allowHttp`: kotlin.Boolean?): TrustDidWeb {
+    @Throws(TrustDidWebException::class) fun `read`(`didTdw`: kotlin.String, `didLog`: kotlin.String): TrustDidWeb {
             return FfiConverterTypeTrustDidWeb.lift(
     uniffiRustCallWithError(TrustDidWebException) { _status ->
     UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidweb_read(
-        FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),FfiConverterOptionalBoolean.lower(`allowHttp`),_status)
+        FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),_status)
 }
     )
     }
@@ -3549,11 +3573,11 @@ open class TrustDidWebId: Disposable, AutoCloseable, TrustDidWebIdInterface {
      *
      * CAUTION Calling any of the available getters should take place after this method is called, not earlier.
      */
-    @Throws(TrustDidWebIdResolutionException::class) fun `parseDidTdw`(`didTdw`: kotlin.String, `allowHttp`: kotlin.Boolean?): TrustDidWebId {
+    @Throws(TrustDidWebIdResolutionException::class) fun `parseDidTdw`(`didTdw`: kotlin.String): TrustDidWebId {
             return FfiConverterTypeTrustDidWebId.lift(
     uniffiRustCallWithError(TrustDidWebIdResolutionException) { _status ->
     UniffiLib.INSTANCE.uniffi_didtoolbox_fn_constructor_trustdidwebid_parse_did_tdw(
-        FfiConverterString.lower(`didTdw`),FfiConverterOptionalBoolean.lower(`allowHttp`),_status)
+        FfiConverterString.lower(`didTdw`),_status)
 }
     )
     }
@@ -3720,6 +3744,11 @@ sealed class TrustDidWebException(message: String): kotlin.Exception(message) {
         class InvalidOperation(message: String) : TrustDidWebException(message)
         
     /**
+     * Invalid DID parameter.
+     */
+        class InvalidDidParameter(message: String) : TrustDidWebException(message)
+        
+    /**
      * Invalid DID document.
      */
         class InvalidDidDocument(message: String) : TrustDidWebException(message)
@@ -3747,8 +3776,9 @@ public object FfiConverterTypeTrustDidWebError : FfiConverterRustBuffer<TrustDid
             3 -> TrustDidWebException.SerializationFailed(FfiConverterString.read(buf))
             4 -> TrustDidWebException.DeserializationFailed(FfiConverterString.read(buf))
             5 -> TrustDidWebException.InvalidOperation(FfiConverterString.read(buf))
-            6 -> TrustDidWebException.InvalidDidDocument(FfiConverterString.read(buf))
-            7 -> TrustDidWebException.InvalidDataIntegrityProof(FfiConverterString.read(buf))
+            6 -> TrustDidWebException.InvalidDidParameter(FfiConverterString.read(buf))
+            7 -> TrustDidWebException.InvalidDidDocument(FfiConverterString.read(buf))
+            8 -> TrustDidWebException.InvalidDataIntegrityProof(FfiConverterString.read(buf))
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
         
@@ -3780,12 +3810,16 @@ public object FfiConverterTypeTrustDidWebError : FfiConverterRustBuffer<TrustDid
                 buf.putInt(5)
                 Unit
             }
-            is TrustDidWebException.InvalidDidDocument -> {
+            is TrustDidWebException.InvalidDidParameter -> {
                 buf.putInt(6)
                 Unit
             }
-            is TrustDidWebException.InvalidDataIntegrityProof -> {
+            is TrustDidWebException.InvalidDidDocument -> {
                 buf.putInt(7)
+                Unit
+            }
+            is TrustDidWebException.InvalidDataIntegrityProof -> {
+                buf.putInt(8)
                 Unit
             }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
@@ -3882,38 +3916,6 @@ public object FfiConverterTypeVerificationType: FfiConverterRustBuffer<Verificat
 }
 
 
-
-
-
-
-/**
- * @suppress
- */
-public object FfiConverterOptionalBoolean: FfiConverterRustBuffer<kotlin.Boolean?> {
-    override fun read(buf: ByteBuffer): kotlin.Boolean? {
-        if (buf.get().toInt() == 0) {
-            return null
-        }
-        return FfiConverterBoolean.read(buf)
-    }
-
-    override fun allocationSize(value: kotlin.Boolean?): ULong {
-        if (value == null) {
-            return 1UL
-        } else {
-            return 1UL + FfiConverterBoolean.allocationSize(value)
-        }
-    }
-
-    override fun write(value: kotlin.Boolean?, buf: ByteBuffer) {
-        if (value == null) {
-            buf.put(0)
-        } else {
-            buf.put(1)
-            FfiConverterBoolean.write(value, buf)
-        }
-    }
-}
 
 
 
