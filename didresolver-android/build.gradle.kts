@@ -98,6 +98,16 @@ configure<PublishingExtension> {
 
 // As suggested by https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
 mavenPublishing {
+    // as suggested by https://vanniktech.github.io/gradle-maven-publish-plugin/what/#android-library-single-variant
+    configure(com.vanniktech.maven.publish.AndroidSingleVariantLibrary(
+        // the published variant
+        variant = "release",
+        // whether to publish a sources jar
+        sourcesJar = false,
+        // whether to publish a javadoc jar
+        publishJavadocJar = false,
+    ))
+
     // when publishing to https://central.sonatype.com/
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
 
