@@ -109,7 +109,7 @@ mavenPublishing {
     ))
 
     // when publishing to https://central.sonatype.com/
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
+    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
 
     signAllPublications()
 
