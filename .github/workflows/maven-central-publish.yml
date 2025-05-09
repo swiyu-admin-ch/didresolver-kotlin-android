@@ -24,6 +24,21 @@ jobs:
           distribution: 'zulu'
           java-version: 21
 
+      - name: Decode GPG private key into file
+        id: write_gpg_file
+        uses: timheuer/base64-to-file@v1.2.4
+        with:
+          fileName: 'GPG_PRIVATE_KEY.gpg'
+          encodedString: ${{ secrets.GPG_PRIVATE_KEY_BASE64 }}
+
+      - name: Read decoded GPG private key file
+        id: read_gpg_file
+        #uses: andstor/file-reader-action@v1
+        uses: juliangruber/read-file-action@v1.1.7
+        with:
+          path: ${{ steps.write_gpg_file.outputs.filePath }}
+          trim: true
+
       - name: Publish
         # as suggested by https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
         run: ./gradlew publishToMavenCentral --no-configuration-cache
@@ -32,4 +47,5 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.GPG_KEY_ID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_PRIVATE_KEY }}
+          #ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ steps.read_gpg_file.outputs.content }}
