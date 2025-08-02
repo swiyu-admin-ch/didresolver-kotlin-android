@@ -48,8 +48,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.gson)
-    implementation("net.java.dev.jna:jna:5.14.0@aar")
-    api("net.java.dev.jna:jna:5.14.0@aar")
+    implementation("net.java.dev.jna:jna:5.17.0@aar")
+    api("net.java.dev.jna:jna:5.17.0@aar")
 }
 
 /*
@@ -58,7 +58,7 @@ configure<PublishingExtension> {
         register<MavenPublication>("gpr") {
             groupId = "ch.admin.eid.didresolver"
             artifactId = "didresolver-android"
-            version = "2.1.2"
+            version = "2.1.3"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }
@@ -118,7 +118,7 @@ mavenPublishing {
         //         For the sake of Maven Central publishing, it must now match the relevant Maven Central namespace
         "io.github.swiyu-admin-ch.didresolver",
         "didresolver-android",
-        "2.1.2")
+        "2.1.3")
 
     pom {
         name = "DID Resolver (Kotlin/Android)"
