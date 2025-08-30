@@ -4,14 +4,14 @@ plugins {
     `maven-publish`
     // As suggested by https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
     // see https://vanniktech.github.io/gradle-maven-publish-plugin/
-    id("com.vanniktech.maven.publish") version "0.31.0"
+    id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 android {
     // CAUTION Until 2.0.0 (GitHub packages), the "namespace" was set to "ch.admin.eid.didresolver".
     //         For the sake of Maven Central publishing, it must now resemble the relevant Maven Central namespace
     namespace = "io.github.swiyu.admin.ch.didresolver"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 29
@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.gson)
-    implementation("net.java.dev.jna:jna:5.17.0@aar")
+    implementation(libs.jna)
     api("net.java.dev.jna:jna:5.17.0@aar")
 }
 
@@ -109,7 +109,7 @@ mavenPublishing {
     ))
 
     // when publishing to https://central.sonatype.com/
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    publishToMavenCentral( automaticRelease = false)
 
     signAllPublications()
 

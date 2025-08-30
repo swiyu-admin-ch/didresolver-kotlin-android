@@ -11,6 +11,8 @@ on:
     # see https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#release
     #types: [released, prereleased]
     types: [created]
+  # REMOVEME
+  workflow_dispatch:
 
 jobs:
   publish:
