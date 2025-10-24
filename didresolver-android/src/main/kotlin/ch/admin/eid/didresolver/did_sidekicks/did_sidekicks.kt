@@ -809,6 +809,10 @@ internal open class UniffiVTableCallbackInterfaceDidLogEntryJsonSchema(
 
 
 
+
+
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -824,7 +828,9 @@ internal open class UniffiVTableCallbackInterfaceDidLogEntryJsonSchema(
 // when the library is loaded.
 internal interface IntegrityCheckingUniffiLib : Library {
     // Integrity check functions only
-    fun uniffi_did_sidekicks_checksum_method_diddoc_get_assertion_method(
+    fun uniffi_did_sidekicks_checksum_func_get_key_from_did_doc(
+): Short
+fun uniffi_did_sidekicks_checksum_method_diddoc_get_assertion_method(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_diddoc_get_authentication(
 ): Short
@@ -839,6 +845,8 @@ fun uniffi_did_sidekicks_checksum_method_diddoc_get_controller(
 fun uniffi_did_sidekicks_checksum_method_diddoc_get_deactivated(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_diddoc_get_id(
+): Short
+fun uniffi_did_sidekicks_checksum_method_diddoc_get_key(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_diddoc_get_verification_method(
 ): Short
@@ -961,6 +969,8 @@ fun uniffi_did_sidekicks_fn_method_diddoc_get_deactivated(`ptr`: Pointer,uniffi_
 ): Byte
 fun uniffi_did_sidekicks_fn_method_diddoc_get_id(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_method_diddoc_get_key(`ptr`: Pointer,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_method_diddoc_get_verification_method(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_clone_diddocextended(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
@@ -1025,6 +1035,8 @@ fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_string_array(`ptr`: Poi
 ): Byte
 fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_u64(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Byte
+fun uniffi_did_sidekicks_fn_func_get_key_from_did_doc(`didDoc`: RustBuffer.ByValue,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun ffi_did_sidekicks_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun ffi_did_sidekicks_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
@@ -1151,6 +1163,9 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
+    if (lib.uniffi_did_sidekicks_checksum_func_get_key_from_did_doc() != 6953.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_assertion_method() != 15810.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -1173,6 +1188,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_id() != 6137.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key() != 61960.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_verification_method() != 62805.toShort()) {
@@ -1659,6 +1677,16 @@ public interface DidDocInterface {
     
     fun `getId`(): kotlin.String
     
+    /**
+     * Returns a cryptographic public key (`Jwk`) referenced by the supplied `key_id`, if any.
+     * The key lookup is always done across all verification methods (`verificationMethod`) and
+     * verification relationships
+     * (`authentication`, `assertionMethod`, `keyAgreement`, `capabilityInvocation`, `capabilityInvocation`).
+     *
+     * If no such key exists, `DidSidekicksError::KeyNotFound` is returned.
+     */
+    fun `getKey`(`keyId`: kotlin.String): Jwk
+    
     fun `getVerificationMethod`(): List<VerificationMethod>
     
     companion object
@@ -1836,6 +1864,27 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     uniffiRustCall() { _status ->
     UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_diddoc_get_id(
         it, _status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * Returns a cryptographic public key (`Jwk`) referenced by the supplied `key_id`, if any.
+     * The key lookup is always done across all verification methods (`verificationMethod`) and
+     * verification relationships
+     * (`authentication`, `assertionMethod`, `keyAgreement`, `capabilityInvocation`, `capabilityInvocation`).
+     *
+     * If no such key exists, `DidSidekicksError::KeyNotFound` is returned.
+     */
+    @Throws(DidSidekicksException::class)override fun `getKey`(`keyId`: kotlin.String): Jwk {
+            return FfiConverterTypeJwk.lift(
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_diddoc_get_key(
+        it, FfiConverterString.lower(`keyId`),_status)
 }
     }
     )
@@ -3480,7 +3529,7 @@ sealed class DidSidekicksException(message: String): kotlin.Exception(message) {
         class SerializationFailed(message: String) : DidSidekicksException(message)
         
     /**
-     * The supplied did doc is invalid or contains an argument which isn't part of the did specification/recommendation.
+     * The supplied DID document is invalid or contains an argument which isn't part of the did specification/recommendation.
      */
         class DeserializationFailed(message: String) : DidSidekicksException(message)
         
@@ -3495,9 +3544,19 @@ sealed class DidSidekicksException(message: String): kotlin.Exception(message) {
         class InvalidDataIntegrityProof(message: String) : DidSidekicksException(message)
         
     /**
-     * Invalid DID method parameter
+     * Invalid DID method parameter.
      */
         class InvalidDidMethodParameter(message: String) : DidSidekicksException(message)
+        
+    /**
+     * No such JWK in the DID document.
+     */
+        class KeyNotFound(message: String) : DidSidekicksException(message)
+        
+    /**
+     * Non-existing key referenced in the DID document.
+     */
+        class NonExistingKeyReferenced(message: String) : DidSidekicksException(message)
         
 
     companion object ErrorHandler : UniffiRustCallStatusErrorHandler<DidSidekicksException> {
@@ -3517,6 +3576,8 @@ public object FfiConverterTypeDidSidekicksError : FfiConverterRustBuffer<DidSide
             3 -> DidSidekicksException.InvalidDidDocument(FfiConverterString.read(buf))
             4 -> DidSidekicksException.InvalidDataIntegrityProof(FfiConverterString.read(buf))
             5 -> DidSidekicksException.InvalidDidMethodParameter(FfiConverterString.read(buf))
+            6 -> DidSidekicksException.KeyNotFound(FfiConverterString.read(buf))
+            7 -> DidSidekicksException.NonExistingKeyReferenced(FfiConverterString.read(buf))
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
         
@@ -3546,6 +3607,14 @@ public object FfiConverterTypeDidSidekicksError : FfiConverterRustBuffer<DidSide
             }
             is DidSidekicksException.InvalidDidMethodParameter -> {
                 buf.putInt(5)
+                Unit
+            }
+            is DidSidekicksException.KeyNotFound -> {
+                buf.putInt(6)
+                Unit
+            }
+            is DidSidekicksException.NonExistingKeyReferenced -> {
+                buf.putInt(7)
                 Unit
             }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
@@ -3902,4 +3971,25 @@ public object FfiConverterMapStringTypeDidMethodParameter: FfiConverterRustBuffe
         }
     }
 }
+        /**
+         * The helper parses the supplied DID doc as string and returns a cryptographic public key (`Jwk`) referenced by the supplied `key_id`, if any.
+         *
+         * Parsing failure is denoted by returning `DidSidekicksError::DeserializationFailed`.
+         *
+         * The key lookup is always done across all verification methods (`verificationMethod`) and
+         * verification relationships
+         * (`authentication`, `assertionMethod`, `keyAgreement`, `capabilityInvocation`, `capabilityInvocation`).
+         *
+         * If no such key exists, `DidSidekicksError::KeyNotFound` is returned.
+         */
+    @Throws(DidSidekicksException::class) fun `getKeyFromDidDoc`(`didDoc`: kotlin.String, `keyId`: kotlin.String): Jwk {
+            return FfiConverterTypeJwk.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_func_get_key_from_did_doc(
+        FfiConverterString.lower(`didDoc`),FfiConverterString.lower(`keyId`),_status)
+}
+    )
+    }
+    
+
 
