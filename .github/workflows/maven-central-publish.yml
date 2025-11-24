@@ -12,7 +12,7 @@ on:
     #types: [released, prereleased]
     types: [created]
   # REMOVEME
-  #workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   publish:
