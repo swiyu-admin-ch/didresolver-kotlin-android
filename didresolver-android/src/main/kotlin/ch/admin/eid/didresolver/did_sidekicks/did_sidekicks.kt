@@ -813,6 +813,8 @@ internal open class UniffiVTableCallbackInterfaceDidLogEntryJsonSchema(
 
 
 
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -849,6 +851,8 @@ fun uniffi_did_sidekicks_checksum_method_diddoc_get_id(
 fun uniffi_did_sidekicks_checksum_method_diddoc_get_key(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_diddoc_get_verification_method(
+): Short
+fun uniffi_did_sidekicks_checksum_method_diddoc_to_json(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_diddocextended_get_did_doc(
 ): Short
@@ -972,6 +976,8 @@ fun uniffi_did_sidekicks_fn_method_diddoc_get_id(`ptr`: Pointer,uniffi_out_err: 
 fun uniffi_did_sidekicks_fn_method_diddoc_get_key(`ptr`: Pointer,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_method_diddoc_get_verification_method(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_method_diddoc_to_json(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_clone_diddocextended(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
@@ -1194,6 +1200,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_verification_method() != 62805.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_to_json() != 51838.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_method_diddocextended_get_did_doc() != 63079.toShort()) {
@@ -1689,6 +1698,11 @@ public interface DidDocInterface {
     
     fun `getVerificationMethod`(): List<VerificationMethod>
     
+    /**
+     * Serializes this `DidDoc` object as a `String` of JSON.
+     */
+    fun `toJson`(): kotlin.String
+    
     companion object
 }
 
@@ -1904,10 +1918,30 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     
 
     
+    /**
+     * Serializes this `DidDoc` object as a `String` of JSON.
+     */
+    @Throws(DidSidekicksException::class)override fun `toJson`(): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_diddoc_to_json(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
+    
 
     
     companion object {
         
+    /**
+     * The deserialization-based constructor.
+     * It attempts to deserialize an instance of type `DidDoc` from a string of JSON text.
+     */
     @Throws(DidSidekicksException::class) fun `fromJson`(`jsonContent`: kotlin.String): DidDoc {
             return FfiConverterTypeDidDoc.lift(
     uniffiRustCallWithError(DidSidekicksException) { _status ->
