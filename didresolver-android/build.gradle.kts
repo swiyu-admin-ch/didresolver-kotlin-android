@@ -48,8 +48,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.gson)
-    implementation(libs.jna)
-    api("net.java.dev.jna:jna:5.17.0@aar")
+    implementation("net.java.dev.jna:jna:5.17.0@aar")
 }
 
 /*
