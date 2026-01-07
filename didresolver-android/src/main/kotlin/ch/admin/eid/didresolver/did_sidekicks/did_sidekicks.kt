@@ -815,6 +815,74 @@ internal open class UniffiVTableCallbackInterfaceDidLogEntryJsonSchema(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -898,9 +966,63 @@ fun uniffi_did_sidekicks_checksum_method_didmethodparameter_is_string_array(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_didmethodparameter_is_u64(
 ): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signature_to_multibase(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_get_verifying_key(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_to_multibase(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_write_pkcs8_pem_file(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_to_multibase(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict_from_hex(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_write_public_key_pem_file(
+): Short
+fun uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_add_proof(
+): Short
+fun uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_verify_proof(
+): Short
+fun uniffi_did_sidekicks_checksum_method_jcssha256hasher_base58btc_encode_multihash(
+): Short
+fun uniffi_did_sidekicks_checksum_method_jcssha256hasher_encode_hex(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_default(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_dataintegrityproof_from_json_string(
+): Short
 fun uniffi_did_sidekicks_checksum_constructor_diddoc_from_json(
 ): Short
 fun uniffi_did_sidekicks_checksum_constructor_didlogentryvalidator_from(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_multibase(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_multibase(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_pkcs8_pem(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_generate(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_read_pkcs8_pem_file(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_multibase(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_public_key_pem(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_read_public_key_pem_file(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_signing_key(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_verifying_key(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_default(
 ): Short
 fun ffi_did_sidekicks_uniffi_contract_version(
 ): Int
@@ -951,7 +1073,21 @@ internal interface UniffiLib : Library {
     }
 
     // FFI functions
-    fun uniffi_did_sidekicks_fn_clone_diddoc(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_did_sidekicks_fn_clone_cryptosuiteproofoptions(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_cryptosuiteproofoptions(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_default(uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(`createdDtRfc3339`: RustBuffer.ByValue,`verificationMethod`: RustBuffer.ByValue,`proofPurpose`: RustBuffer.ByValue,`context`: RustBuffer.ByValue,`challenge`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_clone_dataintegrityproof(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_dataintegrityproof(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_dataintegrityproof_from_json_string(`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_clone_diddoc(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun uniffi_did_sidekicks_fn_free_diddoc(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Unit
@@ -1041,6 +1177,74 @@ fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_string_array(`ptr`: Poi
 ): Byte
 fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_u64(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Byte
+fun uniffi_did_sidekicks_fn_clone_ed25519signature(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_ed25519signature(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519signature_to_multibase(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_clone_ed25519signingkey(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_ed25519signingkey(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_pkcs8_pem(`pkcs8Pem`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_generate(uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_read_pkcs8_pem_file(`pkcs8PemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519signingkey_get_verifying_key(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign(`ptr`: Pointer,`message`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519signingkey_to_multibase(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_method_ed25519signingkey_write_pkcs8_pem_file(`ptr`: Pointer,`pkcs8PemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_clone_ed25519verifyingkey(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_ed25519verifyingkey(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_pem(`publicKeyPem`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_read_public_key_pem_file(`publicKeyPemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_to_multibase(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict(`ptr`: Pointer,`message`: RustBuffer.ByValue,`signature`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict_from_hex(`ptr`: Pointer,`messageHex`: RustBuffer.ByValue,`signature`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_write_public_key_pem_file(`ptr`: Pointer,`publicKeyPemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_clone_eddsajcs2022cryptosuite(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_eddsajcs2022cryptosuite(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_signing_key(`signingKey`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_verifying_key(`verifyingKey`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_add_proof(`ptr`: Pointer,`unsecuredDocument`: RustBuffer.ByValue,`options`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_verify_proof(`ptr`: Pointer,`proof`: Pointer,`docHash`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_clone_jcssha256hasher(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_free_jcssha256hasher(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): Unit
+fun uniffi_did_sidekicks_fn_constructor_jcssha256hasher_default(uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_jcssha256hasher_base58btc_encode_multihash(`ptr`: Pointer,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_did_sidekicks_fn_method_jcssha256hasher_encode_hex(`ptr`: Pointer,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_func_get_key_from_did_doc(`didDoc`: RustBuffer.ByValue,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun ffi_did_sidekicks_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
@@ -1271,10 +1475,91 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_u64() != 29426.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_multibase() != 12576.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_get_verifying_key() != 14397.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign() != 44879.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_to_multibase() != 57237.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_write_pkcs8_pem_file() != 5046.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_to_multibase() != 60193.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict() != 7365.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict_from_hex() != 60483.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_write_public_key_pem_file() != 61788.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_add_proof() != 32337.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_verify_proof() != 26174.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_base58btc_encode_multihash() != 9605.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_encode_hex() != 62647.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_default() != 45975.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022() != 15190.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_dataintegrityproof_from_json_string() != 18631.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_did_sidekicks_checksum_constructor_diddoc_from_json() != 34742.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_constructor_didlogentryvalidator_from() != 35475.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_multibase() != 13030.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_multibase() != 27823.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_pkcs8_pem() != 48757.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_generate() != 14367.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_read_pkcs8_pem_file() != 24363.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_multibase() != 37951.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_public_key_pem() != 64657.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_read_public_key_pem_file() != 17361.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_signing_key() != 38121.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_verifying_key() != 46860.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_default() != 49351.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1566,6 +1851,517 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
         val byteBuf = toUtf8(value)
         buf.putInt(byteBuf.limit())
         buf.put(byteBuf)
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+public interface CryptoSuiteProofOptionsInterface {
+    
+    companion object
+}
+
+open class CryptoSuiteProofOptions: Disposable, AutoCloseable, CryptoSuiteProofOptionsInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_cryptosuiteproofoptions(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_cryptosuiteproofoptions(pointer!!, status)
+        }
+    }
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The default constructor aligned with the `eddsa-jcs-2022` suite (https://www.w3.org/TR/vc-di-eddsa/#proof-configuration-eddsa-jcs-2022), hence:
+     *
+     * - `proof_type: "DataIntegrityProof"`
+     *
+     * - `crypto_suite: "eddsa-jcs-2022"`
+     *
+     * - `created: <current datetime>`
+     *
+     * - `proof_purpose: "authentication"`
+     */ fun `default`(): CryptoSuiteProofOptions {
+            return FfiConverterTypeCryptoSuiteProofOptions.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_default(
+        _status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * The super-potent non-empty constructor.
+     *
+     * As nearly all arguments are optional - see the default constructor for default values.
+     */
+    @Throws(DidSidekicksException::class) fun `newEddsaJcs2022`(`createdDtRfc3339`: kotlin.String?, `verificationMethod`: kotlin.String, `proofPurpose`: kotlin.String?, `context`: List<kotlin.String>?, `challenge`: kotlin.String?): CryptoSuiteProofOptions {
+            return FfiConverterTypeCryptoSuiteProofOptions.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(
+        FfiConverterOptionalString.lower(`createdDtRfc3339`),FfiConverterString.lower(`verificationMethod`),FfiConverterOptionalString.lower(`proofPurpose`),FfiConverterOptionalSequenceString.lower(`context`),FfiConverterOptionalString.lower(`challenge`),_status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeCryptoSuiteProofOptions: FfiConverter<CryptoSuiteProofOptions, Pointer> {
+
+    override fun lower(value: CryptoSuiteProofOptions): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): CryptoSuiteProofOptions {
+        return CryptoSuiteProofOptions(value)
+    }
+
+    override fun read(buf: ByteBuffer): CryptoSuiteProofOptions {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: CryptoSuiteProofOptions) = 8UL
+
+    override fun write(value: CryptoSuiteProofOptions, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+/**
+ * Represents a general design pattern, a cryptographic suite type called a `DataIntegrityProof`,
+ * which reduces the burden of writing and implementing cryptographic suites through the reuse of design primitives and source code,
+ * as specified by https://www.w3.org/TR/vc-data-integrity/#dataintegrityproof
+ *
+ * For EdDSA Cryptosuites v1.0 suites, see https://www.w3.org/TR/vc-di-eddsa/#dataintegrityproof
+ */
+public interface DataIntegrityProofInterface {
+    
+    companion object
+}
+
+/**
+ * Represents a general design pattern, a cryptographic suite type called a `DataIntegrityProof`,
+ * which reduces the burden of writing and implementing cryptographic suites through the reuse of design primitives and source code,
+ * as specified by https://www.w3.org/TR/vc-data-integrity/#dataintegrityproof
+ *
+ * For EdDSA Cryptosuites v1.0 suites, see https://www.w3.org/TR/vc-di-eddsa/#dataintegrityproof
+ */
+open class DataIntegrityProof: Disposable, AutoCloseable, DataIntegrityProofInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_dataintegrityproof(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_dataintegrityproof(pointer!!, status)
+        }
+    }
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The non-empty parsing constructor featuring validation in terms of supported type/proofPurpose/cryptosuite
+     */
+    @Throws(DidSidekicksException::class) fun `fromJsonString`(`json`: kotlin.String): DataIntegrityProof {
+            return FfiConverterTypeDataIntegrityProof.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_dataintegrityproof_from_json_string(
+        FfiConverterString.lower(`json`),_status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeDataIntegrityProof: FfiConverter<DataIntegrityProof, Pointer> {
+
+    override fun lower(value: DataIntegrityProof): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): DataIntegrityProof {
+        return DataIntegrityProof(value)
+    }
+
+    override fun read(buf: ByteBuffer): DataIntegrityProof {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: DataIntegrityProof) = 8UL
+
+    override fun write(value: DataIntegrityProof, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
     }
 }
 
@@ -3300,6 +4096,1657 @@ public object FfiConverterTypeDidMethodParameter: FfiConverter<DidMethodParamete
 }
 
 
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+/**
+ * The type represents a container for the byte serialization of an Ed25519
+ * signature, and does not necessarily represent well-formed field or curve
+ * elements.
+ *
+ * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ */
+public interface Ed25519SignatureInterface {
+    
+    /**
+     * The multibase-encoding method.
+     */
+    fun `toMultibase`(): kotlin.String
+    
+    companion object
+}
+
+/**
+ * The type represents a container for the byte serialization of an Ed25519
+ * signature, and does not necessarily represent well-formed field or curve
+ * elements.
+ *
+ * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ */
+open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_ed25519signature(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_ed25519signature(pointer!!, status)
+        }
+    }
+
+    
+    /**
+     * The multibase-encoding method.
+     */override fun `toMultibase`(): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signature_to_multibase(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The type constructor from a multibase-encoded value.
+     */
+    @Throws(DidSidekicksException::class) fun `fromMultibase`(`multibase`: kotlin.String): Ed25519Signature {
+            return FfiConverterTypeEd25519Signature.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519signature_from_multibase(
+        FfiConverterString.lower(`multibase`),_status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeEd25519Signature: FfiConverter<Ed25519Signature, Pointer> {
+
+    override fun lower(value: Ed25519Signature): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): Ed25519Signature {
+        return Ed25519Signature(value)
+    }
+
+    override fun read(buf: ByteBuffer): Ed25519Signature {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: Ed25519Signature) = 8UL
+
+    override fun write(value: Ed25519Signature, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+/**
+ * The type represents Ed25519 secret key as defined in `RFC8032 § 5.1.5` (https://www.rfc-editor.org/rfc/rfc8032#section-5.1.5):
+ *
+ * > The private key is 32 octets (256 bits, corresponding to b) of
+ * > cryptographically secure random data.
+ *
+ * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ */
+public interface Ed25519SigningKeyInterface {
+    
+    /**
+     * Get the `Ed25519VerifyingKey` for this `Ed25519SigningKey`.
+     */
+    fun `getVerifyingKey`(): Ed25519VerifyingKey
+    
+    /**
+     * Sign the given message and return a digital signature.
+     */
+    fun `sign`(`message`: kotlin.String): Ed25519Signature
+    
+    /**
+     * The multibase-encoding method, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
+     *
+     * The encoding of an Ed25519 secret key MUST start with the two-byte prefix 0x8026 (the varint expression of 0x1300),
+     * followed by the 32-byte secret key data. The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
+     * and then prepended with the base-58-btc Multibase header (z).
+     */
+    fun `toMultibase`(): kotlin.String
+    
+    /**
+     * Write ASN.1 DER-encoded PKCS#8 private key to the given path.
+     */
+    fun `writePkcs8PemFile`(`pkcs8PemFile`: kotlin.String)
+    
+    companion object
+}
+
+/**
+ * The type represents Ed25519 secret key as defined in `RFC8032 § 5.1.5` (https://www.rfc-editor.org/rfc/rfc8032#section-5.1.5):
+ *
+ * > The private key is 32 octets (256 bits, corresponding to b) of
+ * > cryptographically secure random data.
+ *
+ * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ */
+open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_ed25519signingkey(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_ed25519signingkey(pointer!!, status)
+        }
+    }
+
+    
+    /**
+     * Get the `Ed25519VerifyingKey` for this `Ed25519SigningKey`.
+     */override fun `getVerifyingKey`(): Ed25519VerifyingKey {
+            return FfiConverterTypeEd25519VerifyingKey.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signingkey_get_verifying_key(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * Sign the given message and return a digital signature.
+     */override fun `sign`(`message`: kotlin.String): Ed25519Signature {
+            return FfiConverterTypeEd25519Signature.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signingkey_sign(
+        it, FfiConverterString.lower(`message`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * The multibase-encoding method, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
+     *
+     * The encoding of an Ed25519 secret key MUST start with the two-byte prefix 0x8026 (the varint expression of 0x1300),
+     * followed by the 32-byte secret key data. The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
+     * and then prepended with the base-58-btc Multibase header (z).
+     */override fun `toMultibase`(): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signingkey_to_multibase(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * Write ASN.1 DER-encoded PKCS#8 private key to the given path.
+     */
+    @Throws(DidSidekicksException::class)override fun `writePkcs8PemFile`(`pkcs8PemFile`: kotlin.String)
+        = 
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signingkey_write_pkcs8_pem_file(
+        it, FfiConverterString.lower(`pkcs8PemFile`),_status)
+}
+    }
+    
+    
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The type constructor from a multibase-encoded value, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
+     *
+     * The encoding of an Ed25519 secret key MUST start with the two-byte prefix 0x8026 (the varint expression of 0x1300),
+     * followed by the 32-byte secret key data. The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
+     * and then prepended with the base-58-btc Multibase header (z).
+     */
+    @Throws(DidSidekicksException::class) fun `fromMultibase`(`multibase`: kotlin.String): Ed25519SigningKey {
+            return FfiConverterTypeEd25519SigningKey.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_multibase(
+        FfiConverterString.lower(`multibase`),_status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * Deserialize PKCS#8-encoded private key from PEM.
+     */
+    @Throws(DidSidekicksException::class) fun `fromPkcs8Pem`(`pkcs8Pem`: kotlin.String): Ed25519SigningKey {
+            return FfiConverterTypeEd25519SigningKey.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_pkcs8_pem(
+        FfiConverterString.lower(`pkcs8Pem`),_status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * Generate an Ed25519 signing key as defined in [RFC8032 § 5.1.5].
+     *
+     * [RFC8032 § 5.1.5]: https://www.rfc-editor.org/rfc/rfc8032#section-5.1.5
+     */ fun `generate`(): Ed25519SigningKey {
+            return FfiConverterTypeEd25519SigningKey.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_generate(
+        _status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * Load public key object from a PEM-encoded file on the local filesystem.
+     */
+    @Throws(DidSidekicksException::class) fun `readPkcs8PemFile`(`pkcs8PemFile`: kotlin.String): Ed25519SigningKey {
+            return FfiConverterTypeEd25519SigningKey.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_read_pkcs8_pem_file(
+        FfiConverterString.lower(`pkcs8PemFile`),_status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeEd25519SigningKey: FfiConverter<Ed25519SigningKey, Pointer> {
+
+    override fun lower(value: Ed25519SigningKey): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): Ed25519SigningKey {
+        return Ed25519SigningKey(value)
+    }
+
+    override fun read(buf: ByteBuffer): Ed25519SigningKey {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: Ed25519SigningKey) = 8UL
+
+    override fun write(value: Ed25519SigningKey, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+/**
+ * The type represents an Ed25519 public key as defined in `RFC8032 § 5.1.5` (https://www.rfc-editor.org/rfc/rfc8032#section-5.1.5).
+ *
+ * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ */
+public interface Ed25519VerifyingKeyInterface {
+    
+    /**
+     * The multibase-encoding method, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
+     *
+     * The encoding of an Ed25519 public key MUST start with the two-byte prefix 0xed01 (the varint expression of 0xed),
+     * followed by the 32-byte public key data.
+     * The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
+     * and then prepended with the base-58-btc Multibase header (z).
+     */
+    fun `toMultibase`(): kotlin.String
+    
+    /**
+     * Strictly verify a signature on a message with this public key.
+     */
+    fun `verifyStrict`(`message`: kotlin.String, `signature`: Ed25519Signature)
+    
+    /**
+     * Strictly verify a signature on a hex message with this public key.
+     */
+    fun `verifyStrictFromHex`(`messageHex`: kotlin.String, `signature`: Ed25519Signature)
+    
+    /**
+     * Write ASN.1 DER-encoded public key to the given path.
+     */
+    fun `writePublicKeyPemFile`(`publicKeyPemFile`: kotlin.String)
+    
+    companion object
+}
+
+/**
+ * The type represents an Ed25519 public key as defined in `RFC8032 § 5.1.5` (https://www.rfc-editor.org/rfc/rfc8032#section-5.1.5).
+ *
+ * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ */
+open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_ed25519verifyingkey(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_ed25519verifyingkey(pointer!!, status)
+        }
+    }
+
+    
+    /**
+     * The multibase-encoding method, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
+     *
+     * The encoding of an Ed25519 public key MUST start with the two-byte prefix 0xed01 (the varint expression of 0xed),
+     * followed by the 32-byte public key data.
+     * The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
+     * and then prepended with the base-58-btc Multibase header (z).
+     */override fun `toMultibase`(): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_to_multibase(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * Strictly verify a signature on a message with this public key.
+     */
+    @Throws(DidSidekicksException::class)override fun `verifyStrict`(`message`: kotlin.String, `signature`: Ed25519Signature)
+        = 
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict(
+        it, FfiConverterString.lower(`message`),FfiConverterTypeEd25519Signature.lower(`signature`),_status)
+}
+    }
+    
+    
+
+    
+    /**
+     * Strictly verify a signature on a hex message with this public key.
+     */
+    @Throws(DidSidekicksException::class)override fun `verifyStrictFromHex`(`messageHex`: kotlin.String, `signature`: Ed25519Signature)
+        = 
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict_from_hex(
+        it, FfiConverterString.lower(`messageHex`),FfiConverterTypeEd25519Signature.lower(`signature`),_status)
+}
+    }
+    
+    
+
+    
+    /**
+     * Write ASN.1 DER-encoded public key to the given path.
+     */
+    @Throws(DidSidekicksException::class)override fun `writePublicKeyPemFile`(`publicKeyPemFile`: kotlin.String)
+        = 
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_write_public_key_pem_file(
+        it, FfiConverterString.lower(`publicKeyPemFile`),_status)
+}
+    }
+    
+    
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The type constructor from a multibase-encoded value, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
+     *
+     * The encoding of an Ed25519 public key MUST start with the two-byte prefix 0xed01 (the varint expression of 0xed),
+     * followed by the 32-byte public key data.
+     * The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
+     * and then prepended with the base-58-btc Multibase header (z).
+     */
+    @Throws(DidSidekicksException::class) fun `fromMultibase`(`multibase`: kotlin.String): Ed25519VerifyingKey {
+            return FfiConverterTypeEd25519VerifyingKey.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_multibase(
+        FfiConverterString.lower(`multibase`),_status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * Deserialize PKCS#8-encoded public key from PEM.
+     */
+    @Throws(DidSidekicksException::class) fun `fromPublicKeyPem`(`publicKeyPem`: kotlin.String): Ed25519VerifyingKey {
+            return FfiConverterTypeEd25519VerifyingKey.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_pem(
+        FfiConverterString.lower(`publicKeyPem`),_status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * Load public key object from a PEM-encoded file on the local filesystem.
+     */
+    @Throws(DidSidekicksException::class) fun `readPublicKeyPemFile`(`publicKeyPemFile`: kotlin.String): Ed25519VerifyingKey {
+            return FfiConverterTypeEd25519VerifyingKey.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_read_public_key_pem_file(
+        FfiConverterString.lower(`publicKeyPemFile`),_status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeEd25519VerifyingKey: FfiConverter<Ed25519VerifyingKey, Pointer> {
+
+    override fun lower(value: Ed25519VerifyingKey): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): Ed25519VerifyingKey {
+        return Ed25519VerifyingKey(value)
+    }
+
+    override fun read(buf: ByteBuffer): Ed25519VerifyingKey {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: Ed25519VerifyingKey) = 8UL
+
+    override fun write(value: Ed25519VerifyingKey, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+/**
+ * Represents the `eddsa-jcs-2022` cryptographic suite, as specified by https://w3c.github.io/vc-di-eddsa/#eddsa-jcs-2022.
+ *
+ * It takes an input document, canonicalizes the document using the JSON Canonicalization Scheme `RFC8785` (https://www.rfc-editor.org/rfc/rfc8785),
+ * and then cryptographically hashes and signs the output resulting in the creation of a data integrity proof.
+ */
+public interface EddsaJcs2022CryptosuiteInterface {
+    
+    /**
+     * Create a data integrity proof given an unsecured data document, as specified by https://www.w3.org/TR/vc-di-eddsa/#create-proof-eddsa-jcs-2022.
+     *
+     * The `VCDataIntegrityProofVerificationError` error code denotes a failure w.r.t. https://www.w3.org/TR/vc-di-eddsa/#transformation-eddsa-jcs-2022.
+     *
+     * The `VCDataIntegrityProofTransformationError` error code denotes a failure w.r.t. https://www.w3.org/TR/vc-di-eddsa/#transformation-eddsa-jcs-2022.
+     *
+     * A runtime error occurs in case this `EddsaJcs2022Cryptosuite` instance features no signing key (required for proof creation).
+     */
+    fun `addProof`(`unsecuredDocument`: kotlin.String, `options`: CryptoSuiteProofOptions): kotlin.String
+    
+    /**
+     * Verify a data integrity proof given an secured data document, as specified by https://www.w3.org/TR/vc-di-eddsa/#verify-proof-eddsa-jcs-2022.
+     *
+     * The `VCDataIntegrityProofTransformationError` error code denotes a failure w.r.t. https://www.w3.org/TR/vc-di-eddsa/#transformation-eddsa-jcs-2022
+     *
+     * The `KeySignatureError` error code indicates if verification of a signature on a hex message with this verification key fails.
+     */
+    fun `verifyProof`(`proof`: DataIntegrityProof, `docHash`: kotlin.String)
+    
+    companion object
+}
+
+/**
+ * Represents the `eddsa-jcs-2022` cryptographic suite, as specified by https://w3c.github.io/vc-di-eddsa/#eddsa-jcs-2022.
+ *
+ * It takes an input document, canonicalizes the document using the JSON Canonicalization Scheme `RFC8785` (https://www.rfc-editor.org/rfc/rfc8785),
+ * and then cryptographically hashes and signs the output resulting in the creation of a data integrity proof.
+ */
+open class EddsaJcs2022Cryptosuite: Disposable, AutoCloseable, EddsaJcs2022CryptosuiteInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_eddsajcs2022cryptosuite(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_eddsajcs2022cryptosuite(pointer!!, status)
+        }
+    }
+
+    
+    /**
+     * Create a data integrity proof given an unsecured data document, as specified by https://www.w3.org/TR/vc-di-eddsa/#create-proof-eddsa-jcs-2022.
+     *
+     * The `VCDataIntegrityProofVerificationError` error code denotes a failure w.r.t. https://www.w3.org/TR/vc-di-eddsa/#transformation-eddsa-jcs-2022.
+     *
+     * The `VCDataIntegrityProofTransformationError` error code denotes a failure w.r.t. https://www.w3.org/TR/vc-di-eddsa/#transformation-eddsa-jcs-2022.
+     *
+     * A runtime error occurs in case this `EddsaJcs2022Cryptosuite` instance features no signing key (required for proof creation).
+     */
+    @Throws(DidSidekicksException::class)override fun `addProof`(`unsecuredDocument`: kotlin.String, `options`: CryptoSuiteProofOptions): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_add_proof(
+        it, FfiConverterString.lower(`unsecuredDocument`),FfiConverterTypeCryptoSuiteProofOptions.lower(`options`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * Verify a data integrity proof given an secured data document, as specified by https://www.w3.org/TR/vc-di-eddsa/#verify-proof-eddsa-jcs-2022.
+     *
+     * The `VCDataIntegrityProofTransformationError` error code denotes a failure w.r.t. https://www.w3.org/TR/vc-di-eddsa/#transformation-eddsa-jcs-2022
+     *
+     * The `KeySignatureError` error code indicates if verification of a signature on a hex message with this verification key fails.
+     */
+    @Throws(DidSidekicksException::class)override fun `verifyProof`(`proof`: DataIntegrityProof, `docHash`: kotlin.String)
+        = 
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_verify_proof(
+        it, FfiConverterTypeDataIntegrityProof.lower(`proof`),FfiConverterString.lower(`docHash`),_status)
+}
+    }
+    
+    
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The signing-capable constructor.
+     */ fun `fromSigningKey`(`signingKey`: Ed25519SigningKey): EddsaJcs2022Cryptosuite {
+            return FfiConverterTypeEddsaJcs2022Cryptosuite.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_signing_key(
+        FfiConverterTypeEd25519SigningKey.lower(`signingKey`),_status)
+}
+    )
+    }
+    
+
+        
+    /**
+     * The verifying-capable constructor.
+     */ fun `fromVerifyingKey`(`verifyingKey`: Ed25519VerifyingKey): EddsaJcs2022Cryptosuite {
+            return FfiConverterTypeEddsaJcs2022Cryptosuite.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_verifying_key(
+        FfiConverterTypeEd25519VerifyingKey.lower(`verifyingKey`),_status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeEddsaJcs2022Cryptosuite: FfiConverter<EddsaJcs2022Cryptosuite, Pointer> {
+
+    override fun lower(value: EddsaJcs2022Cryptosuite): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): EddsaJcs2022Cryptosuite {
+        return EddsaJcs2022Cryptosuite(value)
+    }
+
+    override fun read(buf: ByteBuffer): EddsaJcs2022Cryptosuite {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: EddsaJcs2022Cryptosuite) = 8UL
+
+    override fun write(value: EddsaJcs2022Cryptosuite, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// to the live Rust struct on the other side of the FFI.
+//
+// Each instance implements core operations for working with the Rust `Arc<T>` and the
+// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque pointer to the underlying Rust struct.
+//     Method calls need to read this pointer from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its pointer should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
+//      before it can pass the pointer over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+/**
+ * A `SHA2` (SHA-256) (https://en.wikipedia.org/wiki/SHA-2) hasher with `RFC-8785` (https://datatracker.ietf.org/doc/html/rfc8785) in mind.
+ *
+ * It is capable of hashing any JSON structure w.r.t. `RFC-8785` (JSON Canonicalization Scheme - JCS).
+ */
+public interface JcsSha256HasherInterface {
+    
+    /**
+     * Serialize the given data structure as a JCS UTF-8 string and calculate SHA2-256 multihash out of it.
+     *
+     * The multihash encoded in `base58btc` format is returned.
+     */
+    fun `base58btcEncodeMultihash`(`json`: kotlin.String): kotlin.String
+    
+    /**
+     * Serialize the given data structure as a JCS UTF-8 string and calculate SHA2-256 hash out of it.
+     *
+     * The hash encoded as hex strict representation is returned. Lower case letters are used (e.g. f9b4ca).
+     *
+     * The `JscHashingFailed` error code denotes serialization failure.
+     */
+    fun `encodeHex`(`json`: kotlin.String): kotlin.String
+    
+    companion object
+}
+
+/**
+ * A `SHA2` (SHA-256) (https://en.wikipedia.org/wiki/SHA-2) hasher with `RFC-8785` (https://datatracker.ietf.org/doc/html/rfc8785) in mind.
+ *
+ * It is capable of hashing any JSON structure w.r.t. `RFC-8785` (JSON Canonicalization Scheme - JCS).
+ */
+open class JcsSha256Hasher: Disposable, AutoCloseable, JcsSha256HasherInterface
+{
+
+    constructor(pointer: Pointer) {
+        this.pointer = pointer
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    /**
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noPointer: NoPointer) {
+        this.pointer = null
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    }
+
+    protected val pointer: Pointer?
+    protected val cleanable: UniffiCleaner.Cleanable
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the pointer being freed concurrently.
+        try {
+            return block(this.uniffiClonePointer())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+        override fun run() {
+            pointer?.let { ptr ->
+                uniffiRustCall { status ->
+                    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_free_jcssha256hasher(ptr, status)
+                }
+            }
+        }
+    }
+
+    fun uniffiClonePointer(): Pointer {
+        return uniffiRustCall() { status ->
+            UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_clone_jcssha256hasher(pointer!!, status)
+        }
+    }
+
+    
+    /**
+     * Serialize the given data structure as a JCS UTF-8 string and calculate SHA2-256 multihash out of it.
+     *
+     * The multihash encoded in `base58btc` format is returned.
+     */
+    @Throws(DidSidekicksException::class)override fun `base58btcEncodeMultihash`(`json`: kotlin.String): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_jcssha256hasher_base58btc_encode_multihash(
+        it, FfiConverterString.lower(`json`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
+     * Serialize the given data structure as a JCS UTF-8 string and calculate SHA2-256 hash out of it.
+     *
+     * The hash encoded as hex strict representation is returned. Lower case letters are used (e.g. f9b4ca).
+     *
+     * The `JscHashingFailed` error code denotes serialization failure.
+     */
+    @Throws(DidSidekicksException::class)override fun `encodeHex`(`json`: kotlin.String): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_jcssha256hasher_encode_hex(
+        it, FfiConverterString.lower(`json`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+
+    
+    companion object {
+        
+    /**
+     * The default constructor.
+     */ fun `default`(): JcsSha256Hasher {
+            return FfiConverterTypeJcsSha256Hasher.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_jcssha256hasher_default(
+        _status)
+}
+    )
+    }
+    
+
+        
+    }
+    
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeJcsSha256Hasher: FfiConverter<JcsSha256Hasher, Pointer> {
+
+    override fun lower(value: JcsSha256Hasher): Pointer {
+        return value.uniffiClonePointer()
+    }
+
+    override fun lift(value: Pointer): JcsSha256Hasher {
+        return JcsSha256Hasher(value)
+    }
+
+    override fun read(buf: ByteBuffer): JcsSha256Hasher {
+        // The Rust code always writes pointers as 8 bytes, and will
+        // fail to compile if they don't fit.
+        return lift(Pointer(buf.getLong()))
+    }
+
+    override fun allocationSize(value: JcsSha256Hasher) = 8UL
+
+    override fun write(value: JcsSha256Hasher, buf: ByteBuffer) {
+        // The Rust code always expects pointers written as 8 bytes,
+        // and will fail to compile if they don't fit.
+        buf.putLong(Pointer.nativeValue(lower(value)))
+    }
+}
+
+
 
 data class Jwk (
     var `alg`: kotlin.String?, 
@@ -3583,14 +6030,54 @@ sealed class DidSidekicksException(message: String): kotlin.Exception(message) {
         class InvalidDidMethodParameter(message: String) : DidSidekicksException(message)
         
     /**
+     * Failed to calculate SHA2-256 hash of canonical JSON UTF-8 string.
+     */
+        class JscHashingFailed(message: String) : DidSidekicksException(message)
+        
+    /**
      * No such JWK in the DID document.
      */
         class KeyNotFound(message: String) : DidSidekicksException(message)
         
     /**
+     * Failed to save key.
+     */
+        class KeySerializationFailed(message: String) : DidSidekicksException(message)
+        
+    /**
+     * Failure of a signature to satisfy the verification equation.
+     */
+        class KeySignatureException(message: String) : DidSidekicksException(message)
+        
+    /**
+     * Failed to load key.
+     */
+        class KeyDeserializationFailed(message: String) : DidSidekicksException(message)
+        
+    /**
+     * Failed to convert key from multibase format
+     */
+        class MultibaseKeyConversionFailed(message: String) : DidSidekicksException(message)
+        
+    /**
      * Non-existing key referenced in the DID document.
      */
         class NonExistingKeyReferenced(message: String) : DidSidekicksException(message)
+        
+    /**
+     * A request to generate a proof failed, as specified by https://www.w3.org/TR/vc-data-integrity/#processing-errors
+     */
+        class VcDataIntegrityProofGenerationException(message: String) : DidSidekicksException(message)
+        
+    /**
+     * An error was encountered during proof verification, as specified by https://www.w3.org/TR/vc-data-integrity/#processing-errors
+     */
+        class VcDataIntegrityProofVerificationException(message: String) : DidSidekicksException(message)
+        
+    /**
+     * An error was encountered during the transformation process, as specified by https://www.w3.org/TR/vc-data-integrity/#processing-errors
+     */
+        class VcDataIntegrityProofTransformationException(message: String) : DidSidekicksException(message)
         
 
     companion object ErrorHandler : UniffiRustCallStatusErrorHandler<DidSidekicksException> {
@@ -3610,8 +6097,16 @@ public object FfiConverterTypeDidSidekicksError : FfiConverterRustBuffer<DidSide
             3 -> DidSidekicksException.InvalidDidDocument(FfiConverterString.read(buf))
             4 -> DidSidekicksException.InvalidDataIntegrityProof(FfiConverterString.read(buf))
             5 -> DidSidekicksException.InvalidDidMethodParameter(FfiConverterString.read(buf))
-            6 -> DidSidekicksException.KeyNotFound(FfiConverterString.read(buf))
-            7 -> DidSidekicksException.NonExistingKeyReferenced(FfiConverterString.read(buf))
+            6 -> DidSidekicksException.JscHashingFailed(FfiConverterString.read(buf))
+            7 -> DidSidekicksException.KeyNotFound(FfiConverterString.read(buf))
+            8 -> DidSidekicksException.KeySerializationFailed(FfiConverterString.read(buf))
+            9 -> DidSidekicksException.KeySignatureException(FfiConverterString.read(buf))
+            10 -> DidSidekicksException.KeyDeserializationFailed(FfiConverterString.read(buf))
+            11 -> DidSidekicksException.MultibaseKeyConversionFailed(FfiConverterString.read(buf))
+            12 -> DidSidekicksException.NonExistingKeyReferenced(FfiConverterString.read(buf))
+            13 -> DidSidekicksException.VcDataIntegrityProofGenerationException(FfiConverterString.read(buf))
+            14 -> DidSidekicksException.VcDataIntegrityProofVerificationException(FfiConverterString.read(buf))
+            15 -> DidSidekicksException.VcDataIntegrityProofTransformationException(FfiConverterString.read(buf))
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
         
@@ -3643,12 +6138,44 @@ public object FfiConverterTypeDidSidekicksError : FfiConverterRustBuffer<DidSide
                 buf.putInt(5)
                 Unit
             }
-            is DidSidekicksException.KeyNotFound -> {
+            is DidSidekicksException.JscHashingFailed -> {
                 buf.putInt(6)
                 Unit
             }
-            is DidSidekicksException.NonExistingKeyReferenced -> {
+            is DidSidekicksException.KeyNotFound -> {
                 buf.putInt(7)
+                Unit
+            }
+            is DidSidekicksException.KeySerializationFailed -> {
+                buf.putInt(8)
+                Unit
+            }
+            is DidSidekicksException.KeySignatureException -> {
+                buf.putInt(9)
+                Unit
+            }
+            is DidSidekicksException.KeyDeserializationFailed -> {
+                buf.putInt(10)
+                Unit
+            }
+            is DidSidekicksException.MultibaseKeyConversionFailed -> {
+                buf.putInt(11)
+                Unit
+            }
+            is DidSidekicksException.NonExistingKeyReferenced -> {
+                buf.putInt(12)
+                Unit
+            }
+            is DidSidekicksException.VcDataIntegrityProofGenerationException -> {
+                buf.putInt(13)
+                Unit
+            }
+            is DidSidekicksException.VcDataIntegrityProofVerificationException -> {
+                buf.putInt(14)
+                Unit
+            }
+            is DidSidekicksException.VcDataIntegrityProofTransformationException -> {
+                buf.putInt(15)
                 Unit
             }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
