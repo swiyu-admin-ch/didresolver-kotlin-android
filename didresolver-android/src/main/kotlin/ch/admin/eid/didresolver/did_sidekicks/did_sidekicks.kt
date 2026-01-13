@@ -883,6 +883,12 @@ internal open class UniffiVTableCallbackInterfaceDidLogEntryJsonSchema(
 
 
 
+
+
+
+
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -966,11 +972,15 @@ fun uniffi_did_sidekicks_checksum_method_didmethodparameter_is_string_array(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_didmethodparameter_is_u64(
 ): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signature_to_hex(
+): Short
 fun uniffi_did_sidekicks_checksum_method_ed25519signature_to_multibase(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_get_verifying_key(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign(
+): Short
+fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign_hex(
 ): Short
 fun uniffi_did_sidekicks_checksum_method_ed25519signingkey_to_multibase(
 ): Short
@@ -992,7 +1002,7 @@ fun uniffi_did_sidekicks_checksum_method_jcssha256hasher_base58btc_encode_multih
 ): Short
 fun uniffi_did_sidekicks_checksum_method_jcssha256hasher_encode_hex(
 ): Short
-fun uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_default(
+fun uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_build(
 ): Short
 fun uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(
 ): Short
@@ -1001,6 +1011,8 @@ fun uniffi_did_sidekicks_checksum_constructor_dataintegrityproof_from_json_strin
 fun uniffi_did_sidekicks_checksum_constructor_diddoc_from_json(
 ): Short
 fun uniffi_did_sidekicks_checksum_constructor_didlogentryvalidator_from(
+): Short
+fun uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_hex(
 ): Short
 fun uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_multibase(
 ): Short
@@ -1022,7 +1034,7 @@ fun uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_signi
 ): Short
 fun uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_verifying_key(
 ): Short
-fun uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_default(
+fun uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_build(
 ): Short
 fun ffi_did_sidekicks_uniffi_contract_version(
 ): Int
@@ -1077,7 +1089,7 @@ internal interface UniffiLib : Library {
 ): Pointer
 fun uniffi_did_sidekicks_fn_free_cryptosuiteproofoptions(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Unit
-fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_default(uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_build(uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(`createdDtRfc3339`: RustBuffer.ByValue,`verificationMethod`: RustBuffer.ByValue,`proofPurpose`: RustBuffer.ByValue,`context`: RustBuffer.ByValue,`challenge`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
@@ -1181,8 +1193,12 @@ fun uniffi_did_sidekicks_fn_clone_ed25519signature(`ptr`: Pointer,uniffi_out_err
 ): Pointer
 fun uniffi_did_sidekicks_fn_free_ed25519signature(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Unit
+fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_hex(`hexEncoded`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
 fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519signature_to_hex(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_method_ed25519signature_to_multibase(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_did_sidekicks_fn_clone_ed25519signingkey(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
@@ -1200,6 +1216,8 @@ fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_read_pkcs8_pem_file(`p
 fun uniffi_did_sidekicks_fn_method_ed25519signingkey_get_verifying_key(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign(`ptr`: Pointer,`message`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign_hex(`ptr`: Pointer,`message`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun uniffi_did_sidekicks_fn_method_ed25519signingkey_to_multibase(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
@@ -1239,7 +1257,7 @@ fun uniffi_did_sidekicks_fn_clone_jcssha256hasher(`ptr`: Pointer,uniffi_out_err:
 ): Pointer
 fun uniffi_did_sidekicks_fn_free_jcssha256hasher(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Unit
-fun uniffi_did_sidekicks_fn_constructor_jcssha256hasher_default(uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_did_sidekicks_fn_constructor_jcssha256hasher_build(uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun uniffi_did_sidekicks_fn_method_jcssha256hasher_base58btc_encode_multihash(`ptr`: Pointer,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
@@ -1475,6 +1493,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_u64() != 29426.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_hex() != 54711.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_multibase() != 12576.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -1482,6 +1503,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign() != 44879.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign_hex() != 37320.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_to_multibase() != 57237.toShort()) {
@@ -1514,7 +1538,7 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_encode_hex() != 62647.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_default() != 45975.toShort()) {
+    if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_build() != 60667.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022() != 15190.toShort()) {
@@ -1527,6 +1551,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_constructor_didlogentryvalidator_from() != 35475.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_hex() != 54324.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_multibase() != 13030.toShort()) {
@@ -1559,7 +1586,7 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_verifying_key() != 46860.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_default() != 49351.toShort()) {
+    if (lib.uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_build() != 3669.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -2046,7 +2073,7 @@ open class CryptoSuiteProofOptions: Disposable, AutoCloseable, CryptoSuiteProofO
     companion object {
         
     /**
-     * The default constructor aligned with the `eddsa-jcs-2022` suite (https://www.w3.org/TR/vc-di-eddsa/#proof-configuration-eddsa-jcs-2022), hence:
+     * The empty (default) constructor aligned with the `eddsa-jcs-2022` suite (https://www.w3.org/TR/vc-di-eddsa/#proof-configuration-eddsa-jcs-2022), hence:
      *
      * - `proof_type: "DataIntegrityProof"`
      *
@@ -2055,10 +2082,10 @@ open class CryptoSuiteProofOptions: Disposable, AutoCloseable, CryptoSuiteProofO
      * - `created: <current datetime>`
      *
      * - `proof_purpose: "authentication"`
-     */ fun `default`(): CryptoSuiteProofOptions {
+     */ fun `build`(): CryptoSuiteProofOptions {
             return FfiConverterTypeCryptoSuiteProofOptions.lift(
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_default(
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_build(
         _status)
 }
     )
@@ -4199,9 +4226,15 @@ public object FfiConverterTypeDidMethodParameter: FfiConverter<DidMethodParamete
  * signature, and does not necessarily represent well-formed field or curve
  * elements.
  *
- * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ * Furthermore, the type supports (de)serialization w.r.t `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
  */
 public interface Ed25519SignatureInterface {
+    
+    /**
+     * Encode the hex strict representing this signature.
+     * Lower case letters are used (e.g. f9b4ca)
+     */
+    fun `toHex`(): kotlin.String
     
     /**
      * The multibase-encoding method.
@@ -4216,7 +4249,7 @@ public interface Ed25519SignatureInterface {
  * signature, and does not necessarily represent well-formed field or curve
  * elements.
  *
- * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ * Furthermore, the type supports (de)serialization w.r.t `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
  */
 open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterface
 {
@@ -4302,6 +4335,22 @@ open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterfac
 
     
     /**
+     * Encode the hex strict representing this signature.
+     * Lower case letters are used (e.g. f9b4ca)
+     */override fun `toHex`(): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signature_to_hex(
+        it, _status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
      * The multibase-encoding method.
      */override fun `toMultibase`(): kotlin.String {
             return FfiConverterString.lift(
@@ -4321,7 +4370,30 @@ open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterfac
     companion object {
         
     /**
+     * Parse an Ed25519 signature from a byte hex-encoded string.
+     *
+     * The `HexConversionFailed` error code denotes either:
+     *
+     * - a malformed hex-encoded input or
+     *
+     * - a properly hex-encoded input represents no 64-bytes slice
+     */
+    @Throws(DidSidekicksException::class) fun `fromHex`(`hexEncoded`: kotlin.String): Ed25519Signature {
+            return FfiConverterTypeEd25519Signature.lift(
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_ed25519signature_from_hex(
+        FfiConverterString.lower(`hexEncoded`),_status)
+}
+    )
+    }
+    
+
+        
+    /**
      * The type constructor from a multibase-encoded value.
+     *
+     * The `MultibaseConversionFailed` error code denotes that a supplied string value is not multibase-encoded as specified by
+     * `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html)
      */
     @Throws(DidSidekicksException::class) fun `fromMultibase`(`multibase`: kotlin.String): Ed25519Signature {
             return FfiConverterTypeEd25519Signature.lift(
@@ -4471,7 +4543,7 @@ public object FfiConverterTypeEd25519Signature: FfiConverter<Ed25519Signature, P
  * > The private key is 32 octets (256 bits, corresponding to b) of
  * > cryptographically secure random data.
  *
- * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ * Furthermore, the type supports (de)serialization w.r.t `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
  */
 public interface Ed25519SigningKeyInterface {
     
@@ -4484,6 +4556,13 @@ public interface Ed25519SigningKeyInterface {
      * Sign the given message and return a digital signature.
      */
     fun `sign`(`message`: kotlin.String): Ed25519Signature
+    
+    /**
+     * Sign the given hex-encoded message and return a digital signature.
+     *
+     * The `KeySignatureError` error code denotes a malformed hex-encoded message.
+     */
+    fun `signHex`(`message`: kotlin.String): Ed25519Signature
     
     /**
      * The multibase-encoding method, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
@@ -4508,7 +4587,7 @@ public interface Ed25519SigningKeyInterface {
  * > The private key is 32 octets (256 bits, corresponding to b) of
  * > cryptographically secure random data.
  *
- * Furthermore, the type supports (de)serialization w.r.t `Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
+ * Furthermore, the type supports (de)serialization w.r.t `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html).
  */
 open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterface
 {
@@ -4624,6 +4703,24 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
 
     
     /**
+     * Sign the given hex-encoded message and return a digital signature.
+     *
+     * The `KeySignatureError` error code denotes a malformed hex-encoded message.
+     */
+    @Throws(DidSidekicksException::class)override fun `signHex`(`message`: kotlin.String): Ed25519Signature {
+            return FfiConverterTypeEd25519Signature.lift(
+    callWithPointer {
+    uniffiRustCallWithError(DidSidekicksException) { _status ->
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_method_ed25519signingkey_sign_hex(
+        it, FfiConverterString.lower(`message`),_status)
+}
+    }
+    )
+    }
+    
+
+    
+    /**
      * The multibase-encoding method, as specified by `Multikey` (https://www.w3.org/TR/controller-document/#Multikey):
      *
      * The encoding of an Ed25519 secret key MUST start with the two-byte prefix 0x8026 (the varint expression of 0x1300),
@@ -4667,6 +4764,9 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
      * The encoding of an Ed25519 secret key MUST start with the two-byte prefix 0x8026 (the varint expression of 0x1300),
      * followed by the 32-byte secret key data. The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
      * and then prepended with the base-58-btc Multibase header (z).
+     *
+     * The `MultibaseConversionFailed` error code denotes that a supplied string value is not multibase-encoded as specified by
+     * `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html)
      */
     @Throws(DidSidekicksException::class) fun `fromMultibase`(`multibase`: kotlin.String): Ed25519SigningKey {
             return FfiConverterTypeEd25519SigningKey.lift(
@@ -5052,6 +5152,9 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
      * followed by the 32-byte public key data.
      * The resulting 34-byte value MUST then be encoded using the base-58-btc alphabet,
      * and then prepended with the base-58-btc Multibase header (z).
+     *
+     * The `MultibaseConversionFailed` error code denotes that a supplied string value is not multibase-encoded as specified by
+     * `The Multibase Data Format` (https://www.ietf.org/archive/id/draft-multiformats-multibase-08.html)
      */
     @Throws(DidSidekicksException::class) fun `fromMultibase`(`multibase`: kotlin.String): Ed25519VerifyingKey {
             return FfiConverterTypeEd25519VerifyingKey.lift(
@@ -5702,11 +5805,11 @@ open class JcsSha256Hasher: Disposable, AutoCloseable, JcsSha256HasherInterface
     companion object {
         
     /**
-     * The default constructor.
-     */ fun `default`(): JcsSha256Hasher {
+     * The empty (default) constructor.
+     */ fun `build`(): JcsSha256Hasher {
             return FfiConverterTypeJcsSha256Hasher.lift(
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_jcssha256hasher_default(
+    UniffiLib.INSTANCE.uniffi_did_sidekicks_fn_constructor_jcssha256hasher_build(
         _status)
 }
     )
@@ -6015,6 +6118,11 @@ sealed class DidSidekicksException(message: String): kotlin.Exception(message) {
         class DeserializationFailed(message: String) : DidSidekicksException(message)
         
     /**
+     * Failed to create type a from hex-encoded string.
+     */
+        class HexConversionFailed(message: String) : DidSidekicksException(message)
+        
+    /**
      * Invalid DID document.
      */
         class InvalidDidDocument(message: String) : DidSidekicksException(message)
@@ -6055,9 +6163,9 @@ sealed class DidSidekicksException(message: String): kotlin.Exception(message) {
         class KeyDeserializationFailed(message: String) : DidSidekicksException(message)
         
     /**
-     * Failed to convert key from multibase format
+     * Failed to convert type from a multibase-encoded string.
      */
-        class MultibaseKeyConversionFailed(message: String) : DidSidekicksException(message)
+        class MultibaseConversionFailed(message: String) : DidSidekicksException(message)
         
     /**
      * Non-existing key referenced in the DID document.
@@ -6094,19 +6202,20 @@ public object FfiConverterTypeDidSidekicksError : FfiConverterRustBuffer<DidSide
             return when(buf.getInt()) {
             1 -> DidSidekicksException.SerializationFailed(FfiConverterString.read(buf))
             2 -> DidSidekicksException.DeserializationFailed(FfiConverterString.read(buf))
-            3 -> DidSidekicksException.InvalidDidDocument(FfiConverterString.read(buf))
-            4 -> DidSidekicksException.InvalidDataIntegrityProof(FfiConverterString.read(buf))
-            5 -> DidSidekicksException.InvalidDidMethodParameter(FfiConverterString.read(buf))
-            6 -> DidSidekicksException.JscHashingFailed(FfiConverterString.read(buf))
-            7 -> DidSidekicksException.KeyNotFound(FfiConverterString.read(buf))
-            8 -> DidSidekicksException.KeySerializationFailed(FfiConverterString.read(buf))
-            9 -> DidSidekicksException.KeySignatureException(FfiConverterString.read(buf))
-            10 -> DidSidekicksException.KeyDeserializationFailed(FfiConverterString.read(buf))
-            11 -> DidSidekicksException.MultibaseKeyConversionFailed(FfiConverterString.read(buf))
-            12 -> DidSidekicksException.NonExistingKeyReferenced(FfiConverterString.read(buf))
-            13 -> DidSidekicksException.VcDataIntegrityProofGenerationException(FfiConverterString.read(buf))
-            14 -> DidSidekicksException.VcDataIntegrityProofVerificationException(FfiConverterString.read(buf))
-            15 -> DidSidekicksException.VcDataIntegrityProofTransformationException(FfiConverterString.read(buf))
+            3 -> DidSidekicksException.HexConversionFailed(FfiConverterString.read(buf))
+            4 -> DidSidekicksException.InvalidDidDocument(FfiConverterString.read(buf))
+            5 -> DidSidekicksException.InvalidDataIntegrityProof(FfiConverterString.read(buf))
+            6 -> DidSidekicksException.InvalidDidMethodParameter(FfiConverterString.read(buf))
+            7 -> DidSidekicksException.JscHashingFailed(FfiConverterString.read(buf))
+            8 -> DidSidekicksException.KeyNotFound(FfiConverterString.read(buf))
+            9 -> DidSidekicksException.KeySerializationFailed(FfiConverterString.read(buf))
+            10 -> DidSidekicksException.KeySignatureException(FfiConverterString.read(buf))
+            11 -> DidSidekicksException.KeyDeserializationFailed(FfiConverterString.read(buf))
+            12 -> DidSidekicksException.MultibaseConversionFailed(FfiConverterString.read(buf))
+            13 -> DidSidekicksException.NonExistingKeyReferenced(FfiConverterString.read(buf))
+            14 -> DidSidekicksException.VcDataIntegrityProofGenerationException(FfiConverterString.read(buf))
+            15 -> DidSidekicksException.VcDataIntegrityProofVerificationException(FfiConverterString.read(buf))
+            16 -> DidSidekicksException.VcDataIntegrityProofTransformationException(FfiConverterString.read(buf))
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
         
@@ -6126,56 +6235,60 @@ public object FfiConverterTypeDidSidekicksError : FfiConverterRustBuffer<DidSide
                 buf.putInt(2)
                 Unit
             }
-            is DidSidekicksException.InvalidDidDocument -> {
+            is DidSidekicksException.HexConversionFailed -> {
                 buf.putInt(3)
                 Unit
             }
-            is DidSidekicksException.InvalidDataIntegrityProof -> {
+            is DidSidekicksException.InvalidDidDocument -> {
                 buf.putInt(4)
                 Unit
             }
-            is DidSidekicksException.InvalidDidMethodParameter -> {
+            is DidSidekicksException.InvalidDataIntegrityProof -> {
                 buf.putInt(5)
                 Unit
             }
-            is DidSidekicksException.JscHashingFailed -> {
+            is DidSidekicksException.InvalidDidMethodParameter -> {
                 buf.putInt(6)
                 Unit
             }
-            is DidSidekicksException.KeyNotFound -> {
+            is DidSidekicksException.JscHashingFailed -> {
                 buf.putInt(7)
                 Unit
             }
-            is DidSidekicksException.KeySerializationFailed -> {
+            is DidSidekicksException.KeyNotFound -> {
                 buf.putInt(8)
                 Unit
             }
-            is DidSidekicksException.KeySignatureException -> {
+            is DidSidekicksException.KeySerializationFailed -> {
                 buf.putInt(9)
                 Unit
             }
-            is DidSidekicksException.KeyDeserializationFailed -> {
+            is DidSidekicksException.KeySignatureException -> {
                 buf.putInt(10)
                 Unit
             }
-            is DidSidekicksException.MultibaseKeyConversionFailed -> {
+            is DidSidekicksException.KeyDeserializationFailed -> {
                 buf.putInt(11)
                 Unit
             }
-            is DidSidekicksException.NonExistingKeyReferenced -> {
+            is DidSidekicksException.MultibaseConversionFailed -> {
                 buf.putInt(12)
                 Unit
             }
-            is DidSidekicksException.VcDataIntegrityProofGenerationException -> {
+            is DidSidekicksException.NonExistingKeyReferenced -> {
                 buf.putInt(13)
                 Unit
             }
-            is DidSidekicksException.VcDataIntegrityProofVerificationException -> {
+            is DidSidekicksException.VcDataIntegrityProofGenerationException -> {
                 buf.putInt(14)
                 Unit
             }
-            is DidSidekicksException.VcDataIntegrityProofTransformationException -> {
+            is DidSidekicksException.VcDataIntegrityProofVerificationException -> {
                 buf.putInt(15)
+                Unit
+            }
+            is DidSidekicksException.VcDataIntegrityProofTransformationException -> {
+                buf.putInt(16)
                 Unit
             }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
