@@ -57,7 +57,7 @@ configure<PublishingExtension> {
         register<MavenPublication>("gpr") {
             groupId = "ch.admin.eid.didresolver"
             artifactId = "didresolver-android"
-            version = "2.5.0"
+            version = "2.6.0"
             afterEvaluate {
                 artifact(tasks.getByName("bundleReleaseAar"))
             }
@@ -117,7 +117,7 @@ mavenPublishing {
         //         For the sake of Maven Central publishing, it must now match the relevant Maven Central namespace
         "io.github.swiyu-admin-ch.didresolver",
         "didresolver-android",
-        "2.5.0")
+        "2.6.0")
 
     pom {
         name = "DID Resolver (Kotlin/Android)"
