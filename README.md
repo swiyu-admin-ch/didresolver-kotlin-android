@@ -9,7 +9,7 @@ edit the `pom.xml` file to include the package as a `dependency`:
 
 ```xml
 <dependency>
-    <groupId>io.github.swiyu-admin-ch.didresolver</groupId>
+    <groupId>ch.admin.swiyu.didresolver</groupId>
     <artifactId>didresolver-android</artifactId>
     <!--version>[ANY_AVAILABLE_VERSION]</version-->
 </dependency>
@@ -19,7 +19,7 @@ To [configure Gradle](https://central.sonatype.org/consume/consume-gradle/) to c
 add the package to `dependencies` section in your `build.gradle.kts` (Kotlin DSL) file:
 
 ```kotlin
-implementation("io.github.swiyu-admin-ch.didresolver:didresolver-android:[ANY_AVAILABLE_VERSION]@aar")
+implementation("ch.admin.swiyu.didresolver:didresolver-android:[ANY_AVAILABLE_VERSION]@aar")
 ```
 
 You are more then welcome to explore the relevant [examples](https://github.com/swiyu-admin-ch/didresolver-examples) in a further detail.
