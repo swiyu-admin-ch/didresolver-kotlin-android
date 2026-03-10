@@ -10,7 +10,7 @@ plugins {
 android {
     // CAUTION Until 2.0.0 (GitHub packages), the "namespace" was set to "ch.admin.eid.didresolver".
     //         For the sake of Maven Central publishing, it must now resemble the relevant Maven Central namespace
-    namespace = "io.github.swiyu.admin.ch.didresolver"
+    namespace = "ch.admin.swiyu.didresolver"
     compileSdk = 36
 
     defaultConfig {
@@ -115,7 +115,7 @@ mavenPublishing {
     coordinates(
         // CAUTION Until 2.0.0 (GitHub packages), the "groupId" was set to "ch.admin.eid.didresolver".
         //         For the sake of Maven Central publishing, it must now match the relevant Maven Central namespace
-        "io.github.swiyu-admin-ch.didresolver",
+        "ch.admin.swiyu.didresolver",
         "didresolver-android",
         "2.6.0")
 
