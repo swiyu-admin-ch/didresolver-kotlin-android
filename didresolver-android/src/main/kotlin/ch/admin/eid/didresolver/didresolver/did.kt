@@ -736,6 +736,10 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
 
 
 
+
+
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -751,7 +755,11 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
 // when the library is loaded.
 internal interface IntegrityCheckingUniffiLib : Library {
     // Integrity check functions only
-    fun uniffi_didresolver_checksum_method_did_get_https_url(
+    fun uniffi_didresolver_checksum_func_get_did_from_absolute_kid(
+): Short
+fun uniffi_didresolver_checksum_method_did_as_string(
+): Short
+fun uniffi_didresolver_checksum_method_did_get_https_url(
 ): Short
 fun uniffi_didresolver_checksum_method_did_get_method(
 ): Short
@@ -821,6 +829,8 @@ fun uniffi_didresolver_fn_free_did(`ptr`: Pointer,uniffi_out_err: UniffiRustCall
 ): Unit
 fun uniffi_didresolver_fn_constructor_did_new(`did`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
+fun uniffi_didresolver_fn_method_did_as_string(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun uniffi_didresolver_fn_method_did_get_https_url(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_didresolver_fn_method_did_get_method(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
@@ -832,6 +842,8 @@ fun uniffi_didresolver_fn_method_did_get_url(`ptr`: Pointer,uniffi_out_err: Unif
 fun uniffi_didresolver_fn_method_did_resolve(`ptr`: Pointer,`didLog`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun uniffi_didresolver_fn_method_did_resolve_all(`ptr`: Pointer,`didLog`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+): Pointer
+fun uniffi_didresolver_fn_func_get_did_from_absolute_kid(`absoluteKid`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
 fun ffi_didresolver_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
@@ -959,6 +971,12 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
+    if (lib.uniffi_didresolver_checksum_func_get_did_from_absolute_kid() != 46619.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_didresolver_checksum_method_did_as_string() != 1976.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_didresolver_checksum_method_did_get_https_url() != 30633.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -1289,6 +1307,11 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
 public interface DidInterface {
     
     /**
+     * Returns the original DID string without fragment used to construct this DID object.
+     */
+    fun `asString`(): kotlin.String
+    
+    /**
      * Returns the HTTPS URL "transformed" (w.r.t. https://identity.foundation/didwebvh/next/#the-did-to-https-transformation)
      * from the DID supplied via constructor.
      */
@@ -1447,6 +1470,21 @@ open class Did: Disposable, AutoCloseable, DidInterface
             UniffiLib.INSTANCE.uniffi_didresolver_fn_clone_did(pointer!!, status)
         }
     }
+
+    
+    /**
+     * Returns the original DID string without fragment used to construct this DID object.
+     */override fun `asString`(): kotlin.String {
+            return FfiConverterString.lift(
+    callWithPointer {
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_didresolver_fn_method_did_as_string(
+        it, _status)
+}
+    }
+    )
+    }
+    
 
     
     /**
@@ -1830,5 +1868,18 @@ public object FfiConverterTypeDidResolveError : FfiConverterRustBuffer<DidResolv
 
 
 
+
+        /**
+         * Constructs a DID from an absolute kid.
+         */
+    @Throws(DidResolveException::class) fun `getDidFromAbsoluteKid`(`absoluteKid`: kotlin.String): Did {
+            return FfiConverterTypeDid.lift(
+    uniffiRustCallWithError(DidResolveException) { _status ->
+    UniffiLib.INSTANCE.uniffi_didresolver_fn_func_get_did_from_absolute_kid(
+        FfiConverterString.lower(`absoluteKid`),_status)
+}
+    )
+    }
+    
 
 
