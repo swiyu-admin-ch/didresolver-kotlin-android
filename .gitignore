@@ -23,6 +23,9 @@ gradle-app.setting
 # Ignore Gradle build output directory
 build
 
+gradle.properties
+local.properties
+
 # Ignore Mac DS_Store files
 .DS_Store
 
