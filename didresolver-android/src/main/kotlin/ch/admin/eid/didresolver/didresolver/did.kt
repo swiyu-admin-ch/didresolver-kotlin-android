@@ -1265,7 +1265,9 @@ open class Did: Disposable, AutoCloseable, DidInterface
      *
      * The constructor will attempt to *transform* (w.r.t. https://identity.foundation/didwebvh/next/#the-did-to-https-transformation)
      * the supplied DID method identifier into a valid RFC3986-conform HTTPS URL thus enabling retrival
-     * of its DID log (via an `HTTP GET`). In case of error, the available `DidResolveError`
+     * of its DID log (via an `HTTP GET`). Fragments and querries of the provided did are ignored and removed.
+     *
+     * In case of error, the available `DidResolveError`
      * object features all the detailed information required to narrow down the root cause.
      */
     constructor(`did`: kotlin.String) :
