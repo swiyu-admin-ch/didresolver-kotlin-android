@@ -645,23 +645,23 @@ internal object IntegrityCheckingUniffiLib {
         uniffiCheckApiChecksums(this)
     }
     external fun uniffi_didresolver_checksum_func_get_did_from_absolute_kid(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_as_string(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_get_https_url(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_get_method(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_get_scid(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_get_url(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_resolve(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_method_did_resolve_all(
-    ): Short
+    ): Int
     external fun uniffi_didresolver_checksum_constructor_did_new(
-    ): Short
+    ): Int
     external fun ffi_didresolver_uniffi_contract_version(
     ): Int
 
@@ -718,7 +718,7 @@ internal object UniffiLib {
     external fun ffi_didresolver_rust_future_free_u8(`handle`: Long,
     ): Unit
     external fun ffi_didresolver_rust_future_complete_u8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Byte
+    ): Int
     external fun ffi_didresolver_rust_future_poll_i8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
     ): Unit
     external fun ffi_didresolver_rust_future_cancel_i8(`handle`: Long,
@@ -734,7 +734,7 @@ internal object UniffiLib {
     external fun ffi_didresolver_rust_future_free_u16(`handle`: Long,
     ): Unit
     external fun ffi_didresolver_rust_future_complete_u16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Short
+    ): Int
     external fun ffi_didresolver_rust_future_poll_i16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
     ): Unit
     external fun ffi_didresolver_rust_future_cancel_i16(`handle`: Long,
@@ -822,31 +822,31 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_didresolver_checksum_func_get_did_from_absolute_kid() != 46619.toShort()) {
+    if (lib.uniffi_didresolver_checksum_func_get_did_from_absolute_kid() != 46619) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_as_string() != 56003.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_as_string() != 56003) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_https_url() != 48880.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_get_https_url() != 48880) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_method() != 2160.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_get_method() != 2160) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_scid() != 60094.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_get_scid() != 60094) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_url() != 21814.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_get_url() != 21814) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_resolve() != 15368.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_resolve() != 15368) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_resolve_all() != 6137.toShort()) {
+    if (lib.uniffi_didresolver_checksum_method_did_resolve_all() != 6137) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_constructor_did_new() != 33055.toShort()) {
+    if (lib.uniffi_didresolver_checksum_constructor_did_new() != 33055) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1265,7 +1265,9 @@ open class Did: Disposable, AutoCloseable, DidInterface
      *
      * The constructor will attempt to *transform* (w.r.t. https://identity.foundation/didwebvh/next/#the-did-to-https-transformation)
      * the supplied DID method identifier into a valid RFC3986-conform HTTPS URL thus enabling retrival
-     * of its DID log (via an `HTTP GET`). In case of error, the available `DidResolveError`
+     * of its DID log (via an `HTTP GET`). Fragments and querries of the provided did are ignored and removed.
+     *
+     * In case of error, the available `DidResolveError`
      * object features all the detailed information required to narrow down the root cause.
      */
     constructor(`did`: kotlin.String) :
