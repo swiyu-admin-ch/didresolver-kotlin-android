@@ -1,10 +1,15 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.SourcesJar
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     `maven-publish`
     // As suggested by https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
     // see https://vanniktech.github.io/gradle-maven-publish-plugin/
-    id("com.vanniktech.maven.publish") version "0.34.0"
+    id("com.vanniktech.maven.publish") version "0.37.0"
 }
 
 android {
@@ -38,8 +43,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 }
 
@@ -48,63 +55,20 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.gson)
-    implementation("net.java.dev.jna:jna:5.17.0@aar")
+    //implementation(libs.jna)
+    implementation("net.java.dev.jna:jna:5.19.1@aar")
 }
-
-/*
-configure<PublishingExtension> {
-    publications {
-        register<MavenPublication>("gpr") {
-            groupId = "ch.admin.eid.didresolver"
-            artifactId = "didresolver-android"
-            version = "2.6.0"
-            afterEvaluate {
-                artifact(tasks.getByName("bundleReleaseAar"))
-            }
-        }
-    }
-    repositories {
-        maven {
-            // To publish run in powershell -> $env:TOKEN='<github token>'; $env:USERNAME='<you user>'; ./gradlew publish
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/swiyu-admin-ch/didresolver-kotlin-android")
-            credentials {
-                // For the GitHub packages, create a personal access token having 'write:packages' scope
-                // and then store it into gradle.properties:
-                // gpr.user=<your_GitHub_user>
-                // gpr.token=****************************************
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.token") as String? ?: System.getenv("TOKEN")
-            }
-        }
-        maven {
-            name = "BitNexusMavenHostedRepo"
-            url = uri("https://nexus.bit.admin.ch/repository/bj-swiyu-maven-hosted")
-            credentials {
-                // For the BIT Nexus Maven repo, login onto https://nexus.bit.admin.ch with your u808***** account.
-                // Ensure your U-account already have writing grants for the repo (bj-swiyu-maven-hosted).
-                // Create an access user token (visit https://nexus.bit.admin.ch/#user/usertoken)
-                // and then store it into gradle.properties:
-                // nexus.user=********
-                // nexus.token=********************************************
-                username = project.findProperty("nexus.user") as String? ?: System.getenv("NEXUS_USERNAME")
-                password = project.findProperty("nexus.token") as String? ?: System.getenv("NEXUS_TOKEN")
-            }
-        }
-    }
-}
- */
 
 // As suggested by https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-publish-libraries.html
 mavenPublishing {
     // as suggested by https://vanniktech.github.io/gradle-maven-publish-plugin/what/#android-library-single-variant
-    configure(com.vanniktech.maven.publish.AndroidSingleVariantLibrary(
-        // the published variant
+    configure(AndroidSingleVariantLibrary(
+        // don't publish a javadoc jar
+        javadocJar = JavadocJar.None(),
+        // don't publish a sources jar
+        sourcesJar = SourcesJar.None(),
+        // the publish variant
         variant = "release",
-        // whether to publish a sources jar
-        sourcesJar = false,
-        // whether to publish a javadoc jar
-        publishJavadocJar = false,
     ))
 
     // when publishing to https://central.sonatype.com/
