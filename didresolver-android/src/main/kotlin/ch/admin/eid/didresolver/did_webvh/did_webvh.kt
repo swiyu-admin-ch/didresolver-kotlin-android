@@ -107,6 +107,43 @@ internal open class ForeignBytes : Structure() {
 
     class ByValue : ForeignBytes(), Structure.ByValue
 }
+
+// Converter for `&[u8]` / `[ByRef] bytes` arguments.
+//
+// Only `lower` is valid — zero-copy byte buffers only flow foreign -> Rust,
+// and only in argument position. `lift`, `read`, `write`, and
+// `allocationSize` have no sound implementation here and all panic at
+// runtime. The `FfiConverter` interface is implemented so that the
+// compiler enforces the full method set (rather than relying on eyeball).
+//
+// The provided `ByteBuffer` MUST be direct — only direct buffers have a
+// stable native address that JNA can expose via `getDirectBufferPointer`.
+// The returned `ForeignBytes.ByValue` is only valid for the duration of
+// the FFI call; the Rust side treats it as a borrow.
+internal object FfiConverterByRefBytes : FfiConverter<java.nio.ByteBuffer, ForeignBytes.ByValue> {
+    override fun lower(value: java.nio.ByteBuffer): ForeignBytes.ByValue {
+        require(value.isDirect) { "UniFFI zero-copy &[u8] requires a direct ByteBuffer. Use ByteBuffer.allocateDirect()." }
+        val remaining = value.remaining()
+        val fb = ForeignBytes.ByValue()
+        fb.len = remaining
+        // Zero-length direct buffers: skip getDirectBufferPointer (platform-variable behavior)
+        // and pass null. The Rust side treats (null, 0) as &[].
+        fb.data = if (remaining == 0) null else com.sun.jna.Native.getDirectBufferPointer(value)
+        return fb
+    }
+
+    override fun lift(value: ForeignBytes.ByValue): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be lifted: zero-copy &[u8] only flows foreign->Rust")
+
+    override fun read(buf: java.nio.ByteBuffer): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be read from a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun write(value: java.nio.ByteBuffer, buf: java.nio.ByteBuffer): Unit =
+        error("ByRef bytes cannot be written to a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun allocationSize(value: java.nio.ByteBuffer): ULong =
+        error("ByRef bytes have no RustBuffer allocation size: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+}
 /**
  * The FfiConverter interface handles converter types to and from the FFI
  *
@@ -644,6 +681,8 @@ internal object IntegrityCheckingUniffiLib {
         uniffiCheckContractApiVersion(this)
         uniffiCheckApiChecksums(this)
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_did_webvh_checksum_method_webverifiablehistory_get_did(
     ): Int
     external fun uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_doc(
@@ -687,6 +726,8 @@ internal object UniffiLib {
         ch.admin.eid.didresolver.did_sidekicks.uniffiEnsureInitialized()
         
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_did_webvh_fn_clone_webverifiablehistory(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): Long
     external fun uniffi_did_webvh_fn_free_webverifiablehistory(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
@@ -842,40 +883,40 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did() != 18267) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did() and 0xFFFF) != 18267) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_doc() != 7820) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_doc() and 0xFFFF) != 7820) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_doc_obj_thread_safe() != 50174) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_doc_obj_thread_safe() and 0xFFFF) != 50174) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_log() != 62763) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_log() and 0xFFFF) != 62763) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_method_parameters() != 27913) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistory_get_did_method_parameters() and 0xFFFF) != 27913) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistorydidmethodparameters_get_scid() != 26418) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistorydidmethodparameters_get_scid() and 0xFFFF) != 26418) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistorydidmethodparameters_get_update_keys() != 2362) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistorydidmethodparameters_get_update_keys() and 0xFFFF) != 15671) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistorydidmethodparameters_is_deactivated() != 31397) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistorydidmethodparameters_is_deactivated() and 0xFFFF) != 31397) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistoryid_get_scid() != 61206) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistoryid_get_scid() and 0xFFFF) != 61206) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_method_webverifiablehistoryid_get_url() != 8017) {
+    if ((lib.uniffi_did_webvh_checksum_method_webverifiablehistoryid_get_url() and 0xFFFF) != 8017) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_constructor_webverifiablehistory_resolve() != 35941) {
+    if ((lib.uniffi_did_webvh_checksum_constructor_webverifiablehistory_resolve() and 0xFFFF) != 35941) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_webvh_checksum_constructor_webverifiablehistoryid_parse_did_webvh() != 21008) {
+    if ((lib.uniffi_did_webvh_checksum_constructor_webverifiablehistoryid_parse_did_webvh() and 0xFFFF) != 21008) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -884,10 +925,10 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
  * @suppress
  */
 public fun uniffiEnsureInitialized() {
-    IntegrityCheckingUniffiLib
-    // UniffiLib() initialized as objects are used, but we still need to explicitly
-    // reference it so initialization across crates works as expected.
-    UniffiLib
+    // Call arbitrary methods on IntegrityCheckingUniffiLib and UniffiLib to ensure that
+    // their init blocks run. This ensures initialization across crates works as expected.
+    IntegrityCheckingUniffiLib.ensureInitialized()
+    UniffiLib.ensureInitialized()
 }
 
 // Async support
@@ -1283,6 +1324,11 @@ open class WebVerifiableHistory: Disposable, AutoCloseable, WebVerifiableHistory
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -1448,7 +1494,9 @@ open class WebVerifiableHistory: Disposable, AutoCloseable, WebVerifiableHistory
     uniffiRustCallWithError(DidResolverExceptionExternalErrorHandler) { _status ->
     UniffiLib.uniffi_did_webvh_fn_constructor_webverifiablehistory_resolve(
     
-        FfiConverterString.lower(`didWebvh`),FfiConverterString.lower(`didLog`),_status)
+        
+        FfiConverterString.lower(`didWebvh`),
+        FfiConverterString.lower(`didLog`),_status)
 }
     )
     }
@@ -1629,6 +1677,11 @@ open class WebVerifiableHistoryDidMethodParameters: Disposable, AutoCloseable, W
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
 
     override fun destroy() {
         // Only allow a single call to this method.
@@ -1935,6 +1988,11 @@ open class WebVerifiableHistoryId: Disposable, AutoCloseable, WebVerifiableHisto
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -2050,6 +2108,7 @@ open class WebVerifiableHistoryId: Disposable, AutoCloseable, WebVerifiableHisto
     uniffiRustCallWithError(WebVerifiableHistoryIdResolutionException) { _status ->
     UniffiLib.uniffi_did_webvh_fn_constructor_webverifiablehistoryid_parse_did_webvh(
     
+        
         FfiConverterString.lower(`didWebvh`),_status)
 }
     )

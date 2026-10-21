@@ -107,6 +107,43 @@ internal open class ForeignBytes : Structure() {
 
     class ByValue : ForeignBytes(), Structure.ByValue
 }
+
+// Converter for `&[u8]` / `[ByRef] bytes` arguments.
+//
+// Only `lower` is valid — zero-copy byte buffers only flow foreign -> Rust,
+// and only in argument position. `lift`, `read`, `write`, and
+// `allocationSize` have no sound implementation here and all panic at
+// runtime. The `FfiConverter` interface is implemented so that the
+// compiler enforces the full method set (rather than relying on eyeball).
+//
+// The provided `ByteBuffer` MUST be direct — only direct buffers have a
+// stable native address that JNA can expose via `getDirectBufferPointer`.
+// The returned `ForeignBytes.ByValue` is only valid for the duration of
+// the FFI call; the Rust side treats it as a borrow.
+internal object FfiConverterByRefBytes : FfiConverter<java.nio.ByteBuffer, ForeignBytes.ByValue> {
+    override fun lower(value: java.nio.ByteBuffer): ForeignBytes.ByValue {
+        require(value.isDirect) { "UniFFI zero-copy &[u8] requires a direct ByteBuffer. Use ByteBuffer.allocateDirect()." }
+        val remaining = value.remaining()
+        val fb = ForeignBytes.ByValue()
+        fb.len = remaining
+        // Zero-length direct buffers: skip getDirectBufferPointer (platform-variable behavior)
+        // and pass null. The Rust side treats (null, 0) as &[].
+        fb.data = if (remaining == 0) null else com.sun.jna.Native.getDirectBufferPointer(value)
+        return fb
+    }
+
+    override fun lift(value: ForeignBytes.ByValue): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be lifted: zero-copy &[u8] only flows foreign->Rust")
+
+    override fun read(buf: java.nio.ByteBuffer): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be read from a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun write(value: java.nio.ByteBuffer, buf: java.nio.ByteBuffer): Unit =
+        error("ByRef bytes cannot be written to a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun allocationSize(value: java.nio.ByteBuffer): ULong =
+        error("ByRef bytes have no RustBuffer allocation size: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+}
 /**
  * The FfiConverter interface handles converter types to and from the FFI
  *
@@ -644,6 +681,8 @@ internal object IntegrityCheckingUniffiLib {
         uniffiCheckContractApiVersion(this)
         uniffiCheckApiChecksums(this)
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_did_tdw_checksum_method_trustdidweb_get_did(
     ): Int
     external fun uniffi_did_tdw_checksum_method_trustdidweb_get_did_doc(
@@ -689,6 +728,8 @@ internal object UniffiLib {
         ch.admin.eid.didresolver.did_sidekicks.uniffiEnsureInitialized()
         
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_did_tdw_fn_clone_trustdidweb(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): Long
     external fun uniffi_did_tdw_fn_free_trustdidweb(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
@@ -846,43 +887,43 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did() != 6952) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did() and 0xFFFF) != 6952) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_doc() != 9615) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_doc() and 0xFFFF) != 9615) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_doc_obj_thread_safe() != 35984) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_doc_obj_thread_safe() and 0xFFFF) != 35984) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_log() != 51133) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_log() and 0xFFFF) != 51133) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_method_parameters() != 44701) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidweb_get_did_method_parameters() and 0xFFFF) != 44701) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidwebdidmethodparameters_get_scid() != 33331) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidwebdidmethodparameters_get_scid() and 0xFFFF) != 33331) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidwebdidmethodparameters_get_update_keys() != 16990) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidwebdidmethodparameters_get_update_keys() and 0xFFFF) != 39376) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidwebdidmethodparameters_is_deactivated() != 48728) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidwebdidmethodparameters_is_deactivated() and 0xFFFF) != 48728) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidwebid_get_scid() != 59181) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidwebid_get_scid() and 0xFFFF) != 59181) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_method_trustdidwebid_get_url() != 42671) {
+    if ((lib.uniffi_did_tdw_checksum_method_trustdidwebid_get_url() and 0xFFFF) != 42671) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_constructor_trustdidweb_read() != 22616) {
+    if ((lib.uniffi_did_tdw_checksum_constructor_trustdidweb_read() and 0xFFFF) != 22616) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_constructor_trustdidweb_resolve() != 47257) {
+    if ((lib.uniffi_did_tdw_checksum_constructor_trustdidweb_resolve() and 0xFFFF) != 47257) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_tdw_checksum_constructor_trustdidwebid_parse_did_tdw() != 39804) {
+    if ((lib.uniffi_did_tdw_checksum_constructor_trustdidwebid_parse_did_tdw() and 0xFFFF) != 39804) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -891,10 +932,10 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
  * @suppress
  */
 public fun uniffiEnsureInitialized() {
-    IntegrityCheckingUniffiLib
-    // UniffiLib() initialized as objects are used, but we still need to explicitly
-    // reference it so initialization across crates works as expected.
-    UniffiLib
+    // Call arbitrary methods on IntegrityCheckingUniffiLib and UniffiLib to ensure that
+    // their init blocks run. This ensures initialization across crates works as expected.
+    IntegrityCheckingUniffiLib.ensureInitialized()
+    UniffiLib.ensureInitialized()
 }
 
 // Async support
@@ -1271,6 +1312,11 @@ open class TrustDidWeb: Disposable, AutoCloseable, TrustDidWebInterface
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -1429,7 +1475,9 @@ open class TrustDidWeb: Disposable, AutoCloseable, TrustDidWebInterface
     uniffiRustCallWithError(TrustDidWebException) { _status ->
     UniffiLib.uniffi_did_tdw_fn_constructor_trustdidweb_read(
     
-        FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),_status)
+        
+        FfiConverterString.lower(`didTdw`),
+        FfiConverterString.lower(`didLog`),_status)
 }
     )
     }
@@ -1447,7 +1495,9 @@ open class TrustDidWeb: Disposable, AutoCloseable, TrustDidWebInterface
     uniffiRustCallWithError(DidResolverExceptionExternalErrorHandler) { _status ->
     UniffiLib.uniffi_did_tdw_fn_constructor_trustdidweb_resolve(
     
-        FfiConverterString.lower(`didTdw`),FfiConverterString.lower(`didLog`),_status)
+        
+        FfiConverterString.lower(`didTdw`),
+        FfiConverterString.lower(`didLog`),_status)
 }
     )
     }
@@ -1628,6 +1678,11 @@ open class TrustDidWebDidMethodParameters: Disposable, AutoCloseable, TrustDidWe
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
 
     override fun destroy() {
         // Only allow a single call to this method.
@@ -1934,6 +1989,11 @@ open class TrustDidWebId: Disposable, AutoCloseable, TrustDidWebIdInterface
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -2049,6 +2109,7 @@ open class TrustDidWebId: Disposable, AutoCloseable, TrustDidWebIdInterface
     uniffiRustCallWithError(TrustDidWebIdResolutionException) { _status ->
     UniffiLib.uniffi_did_tdw_fn_constructor_trustdidwebid_parse_did_tdw(
     
+        
         FfiConverterString.lower(`didTdw`),_status)
 }
     )
