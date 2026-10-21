@@ -107,6 +107,43 @@ internal open class ForeignBytes : Structure() {
 
     class ByValue : ForeignBytes(), Structure.ByValue
 }
+
+// Converter for `&[u8]` / `[ByRef] bytes` arguments.
+//
+// Only `lower` is valid — zero-copy byte buffers only flow foreign -> Rust,
+// and only in argument position. `lift`, `read`, `write`, and
+// `allocationSize` have no sound implementation here and all panic at
+// runtime. The `FfiConverter` interface is implemented so that the
+// compiler enforces the full method set (rather than relying on eyeball).
+//
+// The provided `ByteBuffer` MUST be direct — only direct buffers have a
+// stable native address that JNA can expose via `getDirectBufferPointer`.
+// The returned `ForeignBytes.ByValue` is only valid for the duration of
+// the FFI call; the Rust side treats it as a borrow.
+internal object FfiConverterByRefBytes : FfiConverter<java.nio.ByteBuffer, ForeignBytes.ByValue> {
+    override fun lower(value: java.nio.ByteBuffer): ForeignBytes.ByValue {
+        require(value.isDirect) { "UniFFI zero-copy &[u8] requires a direct ByteBuffer. Use ByteBuffer.allocateDirect()." }
+        val remaining = value.remaining()
+        val fb = ForeignBytes.ByValue()
+        fb.len = remaining
+        // Zero-length direct buffers: skip getDirectBufferPointer (platform-variable behavior)
+        // and pass null. The Rust side treats (null, 0) as &[].
+        fb.data = if (remaining == 0) null else com.sun.jna.Native.getDirectBufferPointer(value)
+        return fb
+    }
+
+    override fun lift(value: ForeignBytes.ByValue): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be lifted: zero-copy &[u8] only flows foreign->Rust")
+
+    override fun read(buf: java.nio.ByteBuffer): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be read from a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun write(value: java.nio.ByteBuffer, buf: java.nio.ByteBuffer): Unit =
+        error("ByRef bytes cannot be written to a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun allocationSize(value: java.nio.ByteBuffer): ULong =
+        error("ByRef bytes have no RustBuffer allocation size: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+}
 /**
  * The FfiConverter interface handles converter types to and from the FFI
  *
@@ -644,6 +681,8 @@ internal object IntegrityCheckingUniffiLib {
         uniffiCheckContractApiVersion(this)
         uniffiCheckApiChecksums(this)
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_didresolver_checksum_func_get_did_from_absolute_kid(
     ): Int
     external fun uniffi_didresolver_checksum_method_did_as_string(
@@ -681,6 +720,8 @@ internal object UniffiLib {
         ch.admin.eid.didresolver.did_sidekicks.uniffiEnsureInitialized()
         
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_didresolver_fn_clone_did(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): Long
     external fun uniffi_didresolver_fn_free_did(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
@@ -822,31 +863,31 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_didresolver_checksum_func_get_did_from_absolute_kid() != 46619) {
+    if ((lib.uniffi_didresolver_checksum_func_get_did_from_absolute_kid() and 0xFFFF) != 46619) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_as_string() != 56003) {
+    if ((lib.uniffi_didresolver_checksum_method_did_as_string() and 0xFFFF) != 56003) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_https_url() != 48880) {
+    if ((lib.uniffi_didresolver_checksum_method_did_get_https_url() and 0xFFFF) != 48880) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_method() != 2160) {
+    if ((lib.uniffi_didresolver_checksum_method_did_get_method() and 0xFFFF) != 2160) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_scid() != 60094) {
+    if ((lib.uniffi_didresolver_checksum_method_did_get_scid() and 0xFFFF) != 60094) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_get_url() != 21814) {
+    if ((lib.uniffi_didresolver_checksum_method_did_get_url() and 0xFFFF) != 21814) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_resolve() != 15368) {
+    if ((lib.uniffi_didresolver_checksum_method_did_resolve() and 0xFFFF) != 15368) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_method_did_resolve_all() != 6137) {
+    if ((lib.uniffi_didresolver_checksum_method_did_resolve_all() and 0xFFFF) != 6137) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_didresolver_checksum_constructor_did_new() != 33055) {
+    if ((lib.uniffi_didresolver_checksum_constructor_did_new() and 0xFFFF) != 33055) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -855,10 +896,10 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
  * @suppress
  */
 public fun uniffiEnsureInitialized() {
-    IntegrityCheckingUniffiLib
-    // UniffiLib() initialized as objects are used, but we still need to explicitly
-    // reference it so initialization across crates works as expected.
-    UniffiLib
+    // Call arbitrary methods on IntegrityCheckingUniffiLib and UniffiLib to ensure that
+    // their init blocks run. This ensures initialization across crates works as expected.
+    IntegrityCheckingUniffiLib.ensureInitialized()
+    UniffiLib.ensureInitialized()
 }
 
 // Async support
@@ -1275,6 +1316,7 @@ open class Did: Disposable, AutoCloseable, DidInterface
     uniffiRustCallWithError(DidResolveException) { _status ->
     UniffiLib.uniffi_didresolver_fn_constructor_did_new(
     
+        
         FfiConverterString.lower(`did`),_status)
 }
     )
@@ -1284,6 +1326,11 @@ open class Did: Disposable, AutoCloseable, DidInterface
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
 
     override fun destroy() {
         // Only allow a single call to this method.
@@ -1452,6 +1499,7 @@ open class Did: Disposable, AutoCloseable, DidInterface
     uniffiRustCallWithError(DidResolveException) { _status ->
     UniffiLib.uniffi_didresolver_fn_method_did_resolve(
         it,
+        
         FfiConverterString.lower(`didLog`),_status)
 }
     }
@@ -1478,6 +1526,7 @@ open class Did: Disposable, AutoCloseable, DidInterface
     uniffiRustCallWithError(DidResolveException) { _status ->
     UniffiLib.uniffi_didresolver_fn_method_did_resolve_all(
         it,
+        
         FfiConverterString.lower(`didLog`),_status)
 }
     }
@@ -1579,7 +1628,7 @@ public object FfiConverterTypeDidMethod : FfiConverterRustBuffer<DidMethod>{
         }
     }
 
-    override fun allocationSize(value: DidMethod) = when(value) {
+    override fun allocationSize(value: DidMethod): ULong = when(value) {
         is DidMethod.Tdw -> {
             // Add the size for the Int that specifies the variant plus the size needed for all fields
             (
@@ -1778,6 +1827,7 @@ public object FfiConverterTypeDidResolveError : FfiConverterRustBuffer<DidResolv
     uniffiRustCallWithError(DidResolveException) { _status ->
     UniffiLib.uniffi_didresolver_fn_func_get_did_from_absolute_kid(
     
+        
         FfiConverterString.lower(`absoluteKid`),_status)
 }
     )

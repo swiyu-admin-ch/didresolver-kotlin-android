@@ -101,6 +101,43 @@ internal open class ForeignBytes : Structure() {
 
     class ByValue : ForeignBytes(), Structure.ByValue
 }
+
+// Converter for `&[u8]` / `[ByRef] bytes` arguments.
+//
+// Only `lower` is valid — zero-copy byte buffers only flow foreign -> Rust,
+// and only in argument position. `lift`, `read`, `write`, and
+// `allocationSize` have no sound implementation here and all panic at
+// runtime. The `FfiConverter` interface is implemented so that the
+// compiler enforces the full method set (rather than relying on eyeball).
+//
+// The provided `ByteBuffer` MUST be direct — only direct buffers have a
+// stable native address that JNA can expose via `getDirectBufferPointer`.
+// The returned `ForeignBytes.ByValue` is only valid for the duration of
+// the FFI call; the Rust side treats it as a borrow.
+internal object FfiConverterByRefBytes : FfiConverter<java.nio.ByteBuffer, ForeignBytes.ByValue> {
+    override fun lower(value: java.nio.ByteBuffer): ForeignBytes.ByValue {
+        require(value.isDirect) { "UniFFI zero-copy &[u8] requires a direct ByteBuffer. Use ByteBuffer.allocateDirect()." }
+        val remaining = value.remaining()
+        val fb = ForeignBytes.ByValue()
+        fb.len = remaining
+        // Zero-length direct buffers: skip getDirectBufferPointer (platform-variable behavior)
+        // and pass null. The Rust side treats (null, 0) as &[].
+        fb.data = if (remaining == 0) null else com.sun.jna.Native.getDirectBufferPointer(value)
+        return fb
+    }
+
+    override fun lift(value: ForeignBytes.ByValue): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be lifted: zero-copy &[u8] only flows foreign->Rust")
+
+    override fun read(buf: java.nio.ByteBuffer): java.nio.ByteBuffer =
+        error("ByRef bytes cannot be read from a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun write(value: java.nio.ByteBuffer, buf: java.nio.ByteBuffer): Unit =
+        error("ByRef bytes cannot be written to a buffer: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+
+    override fun allocationSize(value: java.nio.ByteBuffer): ULong =
+        error("ByRef bytes have no RustBuffer allocation size: zero-copy &[u8] is only supported in argument position, not nested in records/options/etc.")
+}
 /**
  * The FfiConverter interface handles converter types to and from the FFI
  *
@@ -660,6 +697,8 @@ internal object IntegrityCheckingUniffiLib {
         uniffiCheckContractApiVersion(this)
         uniffiCheckApiChecksums(this)
     }
+
+    internal fun ensureInitialized() = Unit
     external fun uniffi_did_sidekicks_checksum_func_get_key_from_did_doc(
     ): Int
     external fun uniffi_did_sidekicks_checksum_method_diddoc_get_assertion_method(
@@ -820,302 +859,304 @@ internal object UniffiLib {
         Native.register(UniffiLib::class.java, findLibraryName(componentName = "did_sidekicks"))
         
     }
-    external fun uniffi_did_sidekicks_fn_clone_cryptosuiteproofoptions(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_cryptosuiteproofoptions(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_build(uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(`createdDtRfc3339`: RustBuffer.ByValue,`verificationMethod`: RustBuffer.ByValue,`proofPurpose`: RustBuffer.ByValue,`context`: RustBuffer.ByValue,`challenge`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_clone_dataintegrityproof(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_dataintegrityproof(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_dataintegrityproof_from_json_string(`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_clone_diddoc(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_diddoc(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_diddoc_from_json(`jsonContent`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_assertion_method(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_authentication(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_capability_delegation(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_capability_invocation(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_context(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_controller(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_deactivated(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_id(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_key(`ptr`: Long,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_key_by_fragment(`ptr`: Long,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_key_by_method_id(`ptr`: Long,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_profile_version(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_get_verification_method(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_diddoc_to_json(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_clone_diddocextended(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_diddocextended(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_method_diddocextended_get_did_doc(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_diddocextended_get_did_method_parameters(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_clone_didlogentryjsonschema(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_didlogentryjsonschema(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_method_didlogentryjsonschema_get_json_schema(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_clone_didlogentryvalidator(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_didlogentryvalidator(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_didlogentryvalidator_from(`schema`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_didlogentryvalidator_validate(`ptr`: Long,`instance`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_clone_didmethodparameter(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_didmethodparameter(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_bool_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_f64_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_i64_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_json_text(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_name(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_string_array_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_string_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_u64_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_array(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_bool(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_empty_array(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_f64(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_i64(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_null(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_object(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_string(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_string_array(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_u64(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun uniffi_did_sidekicks_fn_clone_ed25519signature(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_ed25519signature(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_hex(`hexEncoded`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_ed25519signature_to_hex(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_ed25519signature_to_multibase(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_clone_ed25519signingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_ed25519signingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_pkcs8_pem(`pkcs8Pem`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_generate(uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_read_pkcs8_pem_file(`pkcs8PemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_get_verifying_key(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign(`ptr`: Long,`message`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign_hex(`ptr`: Long,`messageHex`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_to_multibase(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_write_pkcs8_pem_file(`ptr`: Long,`pkcs8PemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_clone_ed25519verifyingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_ed25519verifyingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_jwk(`publicKeyJwk`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_pem(`publicKeyPem`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_read_public_key_pem_file(`publicKeyPemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_to_jwk(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_to_multibase(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict(`ptr`: Long,`message`: RustBuffer.ByValue,`signature`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict_from_hex(`ptr`: Long,`messageHex`: RustBuffer.ByValue,`signature`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_write_public_key_pem_file(`ptr`: Long,`publicKeyPemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_clone_eddsajcs2022cryptosuite(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_eddsajcs2022cryptosuite(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_signing_key(`signingKey`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_verifying_key(`verifyingKey`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_add_proof(`ptr`: Long,`unsecuredDocument`: RustBuffer.ByValue,`options`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_verify_proof(`ptr`: Long,`proof`: Long,`docHash`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_clone_jcssha256hasher(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_free_jcssha256hasher(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun uniffi_did_sidekicks_fn_constructor_jcssha256hasher_build(uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun uniffi_did_sidekicks_fn_method_jcssha256hasher_base58btc_encode_multihash(`ptr`: Long,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_method_jcssha256hasher_encode_hex(`ptr`: Long,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun uniffi_did_sidekicks_fn_func_get_key_from_did_doc(`didDoc`: RustBuffer.ByValue,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun ffi_did_sidekicks_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun ffi_did_sidekicks_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun ffi_did_sidekicks_rustbuffer_free(`buf`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-external fun ffi_did_sidekicks_rustbuffer_reserve(`buf`: RustBuffer.ByValue,`additional`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun ffi_did_sidekicks_rust_future_poll_u8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_u8(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_u8(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_u8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Int
-external fun ffi_did_sidekicks_rust_future_poll_i8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_i8(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_i8(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_i8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-external fun ffi_did_sidekicks_rust_future_poll_u16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_u16(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_u16(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_u16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Int
-external fun ffi_did_sidekicks_rust_future_poll_i16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_i16(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_i16(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_i16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Short
-external fun ffi_did_sidekicks_rust_future_poll_u32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_u32(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_u32(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_u32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Int
-external fun ffi_did_sidekicks_rust_future_poll_i32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_i32(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_i32(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_i32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Int
-external fun ffi_did_sidekicks_rust_future_poll_u64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_u64(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_u64(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_u64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun ffi_did_sidekicks_rust_future_poll_i64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_i64(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_i64(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_i64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Long
-external fun ffi_did_sidekicks_rust_future_poll_f32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_f32(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_f32(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_f32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Float
-external fun ffi_did_sidekicks_rust_future_poll_f64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_f64(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_f64(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_f64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Double
-external fun ffi_did_sidekicks_rust_future_poll_rust_buffer(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_rust_buffer(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_rust_buffer(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_rust_buffer(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-external fun ffi_did_sidekicks_rust_future_poll_void(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_cancel_void(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_free_void(`handle`: Long,
-): Unit
-external fun ffi_did_sidekicks_rust_future_complete_void(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
 
-    
+    internal fun ensureInitialized() = Unit
+    external fun uniffi_did_sidekicks_fn_clone_cryptosuiteproofoptions(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_cryptosuiteproofoptions(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_build(uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(`createdDtRfc3339`: RustBuffer.ByValue,`verificationMethod`: RustBuffer.ByValue,`proofPurpose`: RustBuffer.ByValue,`context`: RustBuffer.ByValue,`challenge`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_clone_dataintegrityproof(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_dataintegrityproof(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_dataintegrityproof_from_json_string(`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_clone_diddoc(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_diddoc(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_diddoc_from_json(`jsonContent`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_assertion_method(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_authentication(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_capability_delegation(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_capability_invocation(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_context(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_controller(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_deactivated(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_id(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_key(`ptr`: Long,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_key_by_fragment(`ptr`: Long,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_key_by_method_id(`ptr`: Long,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_profile_version(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_get_verification_method(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_diddoc_to_json(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_clone_diddocextended(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_diddocextended(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_method_diddocextended_get_did_doc(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_diddocextended_get_did_method_parameters(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_clone_didlogentryjsonschema(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_didlogentryjsonschema(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_method_didlogentryjsonschema_get_json_schema(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_clone_didlogentryvalidator(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_didlogentryvalidator(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_didlogentryvalidator_from(`schema`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_didlogentryvalidator_validate(`ptr`: Long,`instance`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_clone_didmethodparameter(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_didmethodparameter(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_bool_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_f64_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_i64_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_json_text(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_name(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_string_array_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_string_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_get_u64_value(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_array(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_bool(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_empty_array(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_f64(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_i64(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_null(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_object(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_string(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_string_array(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_method_didmethodparameter_is_u64(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun uniffi_did_sidekicks_fn_clone_ed25519signature(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_ed25519signature(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_hex(`hexEncoded`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519signature_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_ed25519signature_to_hex(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_ed25519signature_to_multibase(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_clone_ed25519signingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_ed25519signingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_pkcs8_pem(`pkcs8Pem`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_generate(uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519signingkey_read_pkcs8_pem_file(`pkcs8PemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_get_verifying_key(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign(`ptr`: Long,`message`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_sign_hex(`ptr`: Long,`messageHex`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_to_multibase(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_ed25519signingkey_write_pkcs8_pem_file(`ptr`: Long,`pkcs8PemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_clone_ed25519verifyingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_ed25519verifyingkey(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_multibase(`multibase`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_jwk(`publicKeyJwk`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_pem(`publicKeyPem`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_read_public_key_pem_file(`publicKeyPemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_to_jwk(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_to_multibase(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict(`ptr`: Long,`message`: RustBuffer.ByValue,`signature`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict_from_hex(`ptr`: Long,`messageHex`: RustBuffer.ByValue,`signature`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_method_ed25519verifyingkey_write_public_key_pem_file(`ptr`: Long,`publicKeyPemFile`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_clone_eddsajcs2022cryptosuite(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_eddsajcs2022cryptosuite(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_signing_key(`signingKey`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_verifying_key(`verifyingKey`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_add_proof(`ptr`: Long,`unsecuredDocument`: RustBuffer.ByValue,`options`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_verify_proof(`ptr`: Long,`proof`: Long,`docHash`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_clone_jcssha256hasher(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_free_jcssha256hasher(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_did_sidekicks_fn_constructor_jcssha256hasher_build(uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_did_sidekicks_fn_method_jcssha256hasher_base58btc_encode_multihash(`ptr`: Long,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_method_jcssha256hasher_encode_hex(`ptr`: Long,`json`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_did_sidekicks_fn_func_get_key_from_did_doc(`didDoc`: RustBuffer.ByValue,`keyId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_did_sidekicks_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_did_sidekicks_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_did_sidekicks_rustbuffer_free(`buf`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun ffi_did_sidekicks_rustbuffer_reserve(`buf`: RustBuffer.ByValue,`additional`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_did_sidekicks_rust_future_poll_u8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_u8(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_u8(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_u8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_did_sidekicks_rust_future_poll_i8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_i8(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_i8(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_i8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun ffi_did_sidekicks_rust_future_poll_u16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_u16(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_u16(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_u16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_did_sidekicks_rust_future_poll_i16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_i16(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_i16(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_i16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Short
+    external fun ffi_did_sidekicks_rust_future_poll_u32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_u32(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_u32(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_u32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_did_sidekicks_rust_future_poll_i32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_i32(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_i32(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_i32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_did_sidekicks_rust_future_poll_u64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_u64(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_u64(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_u64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun ffi_did_sidekicks_rust_future_poll_i64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_i64(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_i64(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_i64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun ffi_did_sidekicks_rust_future_poll_f32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_f32(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_f32(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_f32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Float
+    external fun ffi_did_sidekicks_rust_future_poll_f64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_f64(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_f64(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_f64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Double
+    external fun ffi_did_sidekicks_rust_future_poll_rust_buffer(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_rust_buffer(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_rust_buffer(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_rust_buffer(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_did_sidekicks_rust_future_poll_void(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_cancel_void(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_free_void(`handle`: Long,
+    ): Unit
+    external fun ffi_did_sidekicks_rust_future_complete_void(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+
+        
 }
 
 private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
@@ -1129,217 +1170,217 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_did_sidekicks_checksum_func_get_key_from_did_doc() != 6953) {
+    if ((lib.uniffi_did_sidekicks_checksum_func_get_key_from_did_doc() and 0xFFFF) != 6953) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_assertion_method() != 37191) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_assertion_method() and 0xFFFF) != 59206) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_authentication() != 55028) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_authentication() and 0xFFFF) != 47524) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_capability_delegation() != 6044) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_capability_delegation() and 0xFFFF) != 64907) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_capability_invocation() != 61251) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_capability_invocation() and 0xFFFF) != 41342) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_context() != 41159) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_context() and 0xFFFF) != 6521) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_controller() != 47496) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_controller() and 0xFFFF) != 17191) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_deactivated() != 51038) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_deactivated() and 0xFFFF) != 51038) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_id() != 15300) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_id() and 0xFFFF) != 15300) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key() != 3957) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key() and 0xFFFF) != 3957) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key_by_fragment() != 56152) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key_by_fragment() and 0xFFFF) != 56152) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key_by_method_id() != 58619) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_key_by_method_id() and 0xFFFF) != 58619) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_profile_version() != 51378) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_profile_version() and 0xFFFF) != 19991) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_get_verification_method() != 57161) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_get_verification_method() and 0xFFFF) != 33636) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddoc_to_json() != 11627) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddoc_to_json() and 0xFFFF) != 11627) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddocextended_get_did_doc() != 34983) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddocextended_get_did_doc() and 0xFFFF) != 34983) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_diddocextended_get_did_method_parameters() != 19911) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_diddocextended_get_did_method_parameters() and 0xFFFF) != 62837) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didlogentryjsonschema_get_json_schema() != 46254) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didlogentryjsonschema_get_json_schema() and 0xFFFF) != 46254) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didlogentryvalidator_validate() != 36939) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didlogentryvalidator_validate() and 0xFFFF) != 36939) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_bool_value() != 27336) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_bool_value() and 0xFFFF) != 43257) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_f64_value() != 26088) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_f64_value() and 0xFFFF) != 6831) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_i64_value() != 61208) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_i64_value() and 0xFFFF) != 48053) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_json_text() != 9466) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_json_text() and 0xFFFF) != 9466) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_name() != 15801) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_name() and 0xFFFF) != 15801) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_string_array_value() != 32815) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_string_array_value() and 0xFFFF) != 32735) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_string_value() != 39370) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_string_value() and 0xFFFF) != 12935) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_u64_value() != 50082) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_get_u64_value() and 0xFFFF) != 37279) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_array() != 58978) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_array() and 0xFFFF) != 58978) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_bool() != 28859) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_bool() and 0xFFFF) != 28859) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_empty_array() != 16312) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_empty_array() and 0xFFFF) != 16312) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_f64() != 15255) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_f64() and 0xFFFF) != 15255) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_i64() != 40923) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_i64() and 0xFFFF) != 40923) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_null() != 2529) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_null() and 0xFFFF) != 2529) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_object() != 53543) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_object() and 0xFFFF) != 53543) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_string() != 24437) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_string() and 0xFFFF) != 24437) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_string_array() != 33516) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_string_array() and 0xFFFF) != 33516) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_u64() != 46179) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_didmethodparameter_is_u64() and 0xFFFF) != 46179) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_hex() != 57229) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_hex() and 0xFFFF) != 57229) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_multibase() != 48986) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signature_to_multibase() and 0xFFFF) != 48986) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_get_verifying_key() != 57053) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_get_verifying_key() and 0xFFFF) != 57053) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign() != 50415) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign() and 0xFFFF) != 50415) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign_hex() != 38120) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_sign_hex() and 0xFFFF) != 38120) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_to_multibase() != 29113) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_to_multibase() and 0xFFFF) != 29113) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_write_pkcs8_pem_file() != 26802) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519signingkey_write_pkcs8_pem_file() and 0xFFFF) != 26802) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_to_jwk() != 55315) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_to_jwk() and 0xFFFF) != 55315) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_to_multibase() != 6485) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_to_multibase() and 0xFFFF) != 6485) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict() != 32628) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict() and 0xFFFF) != 32628) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict_from_hex() != 55397) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_verify_strict_from_hex() and 0xFFFF) != 55397) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_write_public_key_pem_file() != 39293) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_ed25519verifyingkey_write_public_key_pem_file() and 0xFFFF) != 39293) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_add_proof() != 35568) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_add_proof() and 0xFFFF) != 35568) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_verify_proof() != 15210) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_eddsajcs2022cryptosuite_verify_proof() and 0xFFFF) != 15210) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_base58btc_encode_multihash() != 20039) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_base58btc_encode_multihash() and 0xFFFF) != 20039) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_encode_hex() != 53677) {
+    if ((lib.uniffi_did_sidekicks_checksum_method_jcssha256hasher_encode_hex() and 0xFFFF) != 53677) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_build() != 60667) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_build() and 0xFFFF) != 60667) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022() != 15190) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022() and 0xFFFF) != 65205) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_dataintegrityproof_from_json_string() != 18631) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_dataintegrityproof_from_json_string() and 0xFFFF) != 18631) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_diddoc_from_json() != 34742) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_diddoc_from_json() and 0xFFFF) != 34742) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_didlogentryvalidator_from() != 35475) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_didlogentryvalidator_from() and 0xFFFF) != 7108) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_hex() != 54324) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_hex() and 0xFFFF) != 54324) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_multibase() != 13030) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519signature_from_multibase() and 0xFFFF) != 13030) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_multibase() != 27823) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_multibase() and 0xFFFF) != 27823) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_pkcs8_pem() != 48757) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_from_pkcs8_pem() and 0xFFFF) != 48757) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_generate() != 14367) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_generate() and 0xFFFF) != 14367) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_read_pkcs8_pem_file() != 24363) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519signingkey_read_pkcs8_pem_file() and 0xFFFF) != 24363) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_multibase() != 37951) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_multibase() and 0xFFFF) != 37951) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_public_key_jwk() != 1598) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_public_key_jwk() and 0xFFFF) != 1598) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_public_key_pem() != 64657) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_from_public_key_pem() and 0xFFFF) != 64657) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_read_public_key_pem_file() != 17361) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_ed25519verifyingkey_read_public_key_pem_file() and 0xFFFF) != 17361) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_signing_key() != 38121) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_signing_key() and 0xFFFF) != 38121) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_verifying_key() != 46860) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_eddsajcs2022cryptosuite_from_verifying_key() and 0xFFFF) != 46860) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_build() != 3669) {
+    if ((lib.uniffi_did_sidekicks_checksum_constructor_jcssha256hasher_build() and 0xFFFF) != 3669) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1348,10 +1389,10 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
  * @suppress
  */
 public fun uniffiEnsureInitialized() {
-    IntegrityCheckingUniffiLib
-    // UniffiLib() initialized as objects are used, but we still need to explicitly
-    // reference it so initialization across crates works as expected.
-    UniffiLib
+    // Call arbitrary methods on IntegrityCheckingUniffiLib and UniffiLib to ensure that
+    // their init blocks run. This ensures initialization across crates works as expected.
+    IntegrityCheckingUniffiLib.ensureInitialized()
+    UniffiLib.ensureInitialized()
 }
 
 // Async support
@@ -1780,6 +1821,11 @@ open class CryptoSuiteProofOptions: Disposable, AutoCloseable, CryptoSuiteProofO
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -1885,7 +1931,12 @@ open class CryptoSuiteProofOptions: Disposable, AutoCloseable, CryptoSuiteProofO
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_cryptosuiteproofoptions_new_eddsa_jcs_2022(
     
-        FfiConverterOptionalString.lower(`createdDtRfc3339`),FfiConverterString.lower(`verificationMethod`),FfiConverterOptionalString.lower(`proofPurpose`),FfiConverterOptionalSequenceString.lower(`context`),FfiConverterOptionalString.lower(`challenge`),_status)
+        
+        FfiConverterOptionalString.lower(`createdDtRfc3339`),
+        FfiConverterString.lower(`verificationMethod`),
+        FfiConverterOptionalString.lower(`proofPurpose`),
+        FfiConverterOptionalSequenceString.lower(`context`),
+        FfiConverterOptionalString.lower(`challenge`),_status)
 }
     )
     }
@@ -2066,6 +2117,11 @@ open class DataIntegrityProof: Disposable, AutoCloseable, DataIntegrityProofInte
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -2147,6 +2203,7 @@ open class DataIntegrityProof: Disposable, AutoCloseable, DataIntegrityProofInte
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_dataintegrityproof_from_json_string(
     
+        
         FfiConverterString.lower(`json`),_status)
 }
     )
@@ -2383,6 +2440,11 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -2574,6 +2636,7 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_diddoc_get_key(
         it,
+        
         FfiConverterString.lower(`keyId`),_status)
 }
     }
@@ -2596,6 +2659,7 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_diddoc_get_key_by_fragment(
         it,
+        
         FfiConverterString.lower(`keyId`),_status)
 }
     }
@@ -2619,6 +2683,7 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_diddoc_get_key_by_method_id(
         it,
+        
         FfiConverterString.lower(`keyId`),_status)
 }
     }
@@ -2692,6 +2757,7 @@ open class DidDoc: Disposable, AutoCloseable, DidDocInterface
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_diddoc_from_json(
     
+        
         FfiConverterString.lower(`jsonContent`),_status)
 }
     )
@@ -2868,6 +2934,11 @@ open class DidDocExtended: Disposable, AutoCloseable, DidDocExtendedInterface
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
 
     override fun destroy() {
         // Only allow a single call to this method.
@@ -3140,6 +3211,11 @@ open class DidLogEntryJsonSchema: Disposable, AutoCloseable, DidLogEntryJsonSche
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
 
     override fun destroy() {
         // Only allow a single call to this method.
@@ -3417,6 +3493,11 @@ open class DidLogEntryValidator: Disposable, AutoCloseable, DidLogEntryValidator
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -3494,6 +3575,7 @@ open class DidLogEntryValidator: Disposable, AutoCloseable, DidLogEntryValidator
     uniffiRustCallWithError(DidLogEntryValidatorException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_didlogentryvalidator_validate(
         it,
+        
         FfiConverterString.lower(`instance`),_status)
 }
     }
@@ -3515,6 +3597,7 @@ open class DidLogEntryValidator: Disposable, AutoCloseable, DidLogEntryValidator
     uniffiRustCall() { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_didlogentryvalidator_from(
     
+        
         FfiConverterTypeDidLogEntryJsonSchema.lower(`schema`),_status)
 }
     )
@@ -3751,6 +3834,11 @@ open class DidMethodParameter: Disposable, AutoCloseable, DidMethodParameterInte
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
+
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
 
     override fun destroy() {
         // Only allow a single call to this method.
@@ -4270,6 +4358,11 @@ open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterfac
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -4390,6 +4483,7 @@ open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterfac
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519signature_from_hex(
     
+        
         FfiConverterString.lower(`hexEncoded`),_status)
 }
     )
@@ -4408,6 +4502,7 @@ open class Ed25519Signature: Disposable, AutoCloseable, Ed25519SignatureInterfac
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519signature_from_multibase(
     
+        
         FfiConverterString.lower(`multibase`),_status)
 }
     )
@@ -4622,6 +4717,11 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -4712,6 +4812,7 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     uniffiRustCall() { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_ed25519signingkey_sign(
         it,
+        
         FfiConverterString.lower(`message`),_status)
 }
     }
@@ -4731,6 +4832,7 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_ed25519signingkey_sign_hex(
         it,
+        
         FfiConverterString.lower(`messageHex`),_status)
 }
     }
@@ -4768,6 +4870,7 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_ed25519signingkey_write_pkcs8_pem_file(
         it,
+        
         FfiConverterString.lower(`pkcs8PemFile`),_status)
 }
     }
@@ -4797,6 +4900,7 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_multibase(
     
+        
         FfiConverterString.lower(`multibase`),_status)
 }
     )
@@ -4812,6 +4916,7 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_from_pkcs8_pem(
     
+        
         FfiConverterString.lower(`pkcs8Pem`),_status)
 }
     )
@@ -4843,6 +4948,7 @@ open class Ed25519SigningKey: Disposable, AutoCloseable, Ed25519SigningKeyInterf
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519signingkey_read_pkcs8_pem_file(
     
+        
         FfiConverterString.lower(`pkcs8PemFile`),_status)
 }
     )
@@ -5059,6 +5165,11 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -5180,7 +5291,9 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict(
         it,
-        FfiConverterString.lower(`message`),FfiConverterTypeEd25519Signature.lower(`signature`),_status)
+        
+        FfiConverterString.lower(`message`),
+        FfiConverterTypeEd25519Signature.lower(`signature`),_status)
 }
     }
     
@@ -5196,7 +5309,9 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_verify_strict_from_hex(
         it,
-        FfiConverterString.lower(`messageHex`),FfiConverterTypeEd25519Signature.lower(`signature`),_status)
+        
+        FfiConverterString.lower(`messageHex`),
+        FfiConverterTypeEd25519Signature.lower(`signature`),_status)
 }
     }
     
@@ -5212,6 +5327,7 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_ed25519verifyingkey_write_public_key_pem_file(
         it,
+        
         FfiConverterString.lower(`publicKeyPemFile`),_status)
 }
     }
@@ -5242,6 +5358,7 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_multibase(
     
+        
         FfiConverterString.lower(`multibase`),_status)
 }
     )
@@ -5269,6 +5386,7 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_jwk(
     
+        
         FfiConverterString.lower(`publicKeyJwk`),_status)
 }
     )
@@ -5284,6 +5402,7 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_from_public_key_pem(
     
+        
         FfiConverterString.lower(`publicKeyPem`),_status)
 }
     )
@@ -5299,6 +5418,7 @@ open class Ed25519VerifyingKey: Disposable, AutoCloseable, Ed25519VerifyingKeyIn
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_ed25519verifyingkey_read_public_key_pem_file(
     
+        
         FfiConverterString.lower(`publicKeyPemFile`),_status)
 }
     )
@@ -5498,6 +5618,11 @@ open class EddsaJcs2022Cryptosuite: Disposable, AutoCloseable, EddsaJcs2022Crypt
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -5579,7 +5704,9 @@ open class EddsaJcs2022Cryptosuite: Disposable, AutoCloseable, EddsaJcs2022Crypt
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_add_proof(
         it,
-        FfiConverterString.lower(`unsecuredDocument`),FfiConverterTypeCryptoSuiteProofOptions.lower(`options`),_status)
+        
+        FfiConverterString.lower(`unsecuredDocument`),
+        FfiConverterTypeCryptoSuiteProofOptions.lower(`options`),_status)
 }
     }
     )
@@ -5600,7 +5727,9 @@ open class EddsaJcs2022Cryptosuite: Disposable, AutoCloseable, EddsaJcs2022Crypt
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_eddsajcs2022cryptosuite_verify_proof(
         it,
-        FfiConverterTypeDataIntegrityProof.lower(`proof`),FfiConverterString.lower(`docHash`),_status)
+        
+        FfiConverterTypeDataIntegrityProof.lower(`proof`),
+        FfiConverterString.lower(`docHash`),_status)
 }
     }
     
@@ -5621,6 +5750,7 @@ open class EddsaJcs2022Cryptosuite: Disposable, AutoCloseable, EddsaJcs2022Crypt
     uniffiRustCall() { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_signing_key(
     
+        
         FfiConverterTypeEd25519SigningKey.lower(`signingKey`),_status)
 }
     )
@@ -5635,6 +5765,7 @@ open class EddsaJcs2022Cryptosuite: Disposable, AutoCloseable, EddsaJcs2022Crypt
     uniffiRustCall() { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_constructor_eddsajcs2022cryptosuite_from_verifying_key(
     
+        
         FfiConverterTypeEd25519VerifyingKey.lower(`verifyingKey`),_status)
 }
     )
@@ -5828,6 +5959,11 @@ open class JcsSha256Hasher: Disposable, AutoCloseable, JcsSha256HasherInterface
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
 
+    /**
+     * Whether the current object has been destroyed and its reference is gone in the Rust side.
+     */
+    val uniffiIsDestroyed: Boolean get() = wasDestroyed.get()
+
     override fun destroy() {
         // Only allow a single call to this method.
         // TODO: maybe we should log a warning if called more than once?
@@ -5905,6 +6041,7 @@ open class JcsSha256Hasher: Disposable, AutoCloseable, JcsSha256HasherInterface
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_jcssha256hasher_base58btc_encode_multihash(
         it,
+        
         FfiConverterString.lower(`json`),_status)
 }
     }
@@ -5926,6 +6063,7 @@ open class JcsSha256Hasher: Disposable, AutoCloseable, JcsSha256HasherInterface
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_method_jcssha256hasher_encode_hex(
         it,
+        
         FfiConverterString.lower(`json`),_status)
 }
     }
@@ -6476,6 +6614,7 @@ enum class VerificationType {
     
     MULTIKEY,
     JSON_WEB_KEY2020,
+    JSON_WEB_KEY,
     ED25519_VERIFICATION_KEY2020;
 
     
@@ -6838,7 +6977,9 @@ public object FfiConverterMapStringTypeDidMethodParameter: FfiConverterRustBuffe
     uniffiRustCallWithError(DidSidekicksException) { _status ->
     UniffiLib.uniffi_did_sidekicks_fn_func_get_key_from_did_doc(
     
-        FfiConverterString.lower(`didDoc`),FfiConverterString.lower(`keyId`),_status)
+        
+        FfiConverterString.lower(`didDoc`),
+        FfiConverterString.lower(`keyId`),_status)
 }
     )
     }
