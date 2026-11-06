@@ -81,7 +81,7 @@ mavenPublishing {
         //         For the sake of Maven Central publishing, it must now match the relevant Maven Central namespace
         "ch.admin.swiyu.didresolver",
         "didresolver-android",
-        "2.10.0")
+        "2.10.1")
 
     pom {
         name = "DID Resolver (Kotlin/Android)"
